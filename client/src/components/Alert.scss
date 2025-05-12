@@ -1,0 +1,15 @@
+.alert {
+    position: absolute;
+    bottom: 1em;
+    padding: 1em;
+    transition: opacity 300ms ease-in-out;
+    color: white;
+    width: 90%;
+    left: 50%;
+    border-radius: 15px;
+    transform: translateX(-50%);
+    font-weight: 700;
+    &.CONF {
+        background-color: rgb(16, 54, 33);
+    }
+}

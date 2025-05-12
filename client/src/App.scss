@@ -1,0 +1,132 @@
+// Global Application Styles
+
+body, p {
+    font-family: 'Raleway Variable', sans-serif;
+    line-height: 1.5;
+}
+
+.container-max {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.container {
+    margin: 2em auto;
+    max-width: 750px;
+}
+
+.flex-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.observe-loaded {
+    font-family: 'Raleway Variable', sans-serif;
+    margin: 4em auto;
+    display: flex;
+    justify-content: center;
+    gap: 5em;
+}
+
+.observe-main {
+    font-family: 'Raleway Variable', sans-serif;
+}
+
+h1.page-title {
+    font-weight: 900;
+    font-size: 2.5em;
+}
+
+input, input[type=text], textarea, select {
+    font-family: 'Raleway Variable', sans-serif;
+    font-size: 1em;
+    padding: 0.5em;
+    border: 3px black solid;
+    border-radius: 10px;
+}
+
+input[type=file] {
+    display: none;
+}
+
+label.file-upload {
+    background-color: black;
+    width: 100%;
+    color: white;
+    padding: 1em 0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 0.5em;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+        cursor: pointer;
+        background-color: rgb(0,0,0,0.8);
+    }
+}
+
+label {
+    font-weight: 800;
+    text-transform: uppercase;
+    display: block;
+}
+
+a {
+    color: black;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.fade-enter {
+    opacity: 0;
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+}
+
+.fade-exit {
+    opacity: 1;
+
+
+.fade-exit-active {
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+}}
+
+.entering, .entered {
+    opacity: 1;
+}
+.exiting, .exited {
+    opacity: 0;
+}
+
+label.required {
+    &::after {
+        content: '*';
+        color: red;
+        font-weight: 900;
+        padding: -0.5em 0.5em;
+        font-size: 2em;
+        line-height: 0.5em;
+    }
+}
+
+.icon {
+    vertical-align: middle;
+}
+
+.full-width {
+    width: 100%;
+}

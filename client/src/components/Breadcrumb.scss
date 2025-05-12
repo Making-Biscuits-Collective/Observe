@@ -1,0 +1,16 @@
+.breadcrumb {
+    margin: 2em 0;
+    a {
+        font-weight: 900;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: all 0.3s ease-in-out;
+        border-bottom: 2px transparent solid;
+        &:hover {
+            border-bottom: 2px black solid;
+        }
+    }
+    img {
+        vertical-align: middle;
+    }
+}

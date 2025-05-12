@@ -1,0 +1,73 @@
+.observe-event-creation {
+    .container-max {
+        flex-direction: column;
+    }
+    .new-event-intro {
+        margin-bottom: 3em;
+    }
+    .new-event-form {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2em;
+        margin-bottom: 4em;
+        .text-form {
+            grid-column: span 2;
+        }
+        .map-form {
+            grid-column: span 2;
+            .map-actions {
+                display: flex;
+                gap: 1em;
+                .file-upload {
+                    flex: 1;
+                }
+                .existing-image {
+                    flex: 1;
+                    button {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+            }
+        }
+        .input-box {
+            margin-bottom: 1em;
+            input, textarea {
+                width: 90%;
+            }
+            textarea {
+                height: 100px;
+            }
+        }
+    }
+    .image-preview-container {
+        img {
+            width: 100%;
+        }
+    }
+    .unique-event-code {
+        font-weight: 900;
+        font-size: 2em;
+        background-color: rgb(237, 235, 235); 
+        padding: 0.2em 0.5em;
+        border-radius: 10px;
+    }
+    input.event-code {
+        width: 80%;
+        font-size: 1.2em;
+        font-weight: 600;
+        text-align: center;
+    }
+    .navigate-event {
+        display: flex;
+        justify-content: center;
+        margin: 2em 0;
+        flex-direction: column;
+        align-items: center;
+        gap: 1em;
+        &-actions {
+            display: flex;
+            gap: 1em;
+        }
+    }
+}

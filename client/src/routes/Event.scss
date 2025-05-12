@@ -1,0 +1,38 @@
+section.observe-event-page {
+    .container-max {
+        display: flex;
+        flex-direction: column;
+    }
+    span.event-date, span.event-location {
+        font-weight: 800;
+        font-size: 1.3em;
+    }
+    .event-information {
+        display: flex;
+        flex-direction: column;
+    }
+    input.event-code {
+        width: fit-content;
+
+    }
+    .grid {
+        margin-top: 2em;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1em;
+    }
+    .event-information {
+        background-color: rgb(238, 238, 238);
+        border-radius: 10px;
+        padding: 1em;
+    }
+    h1.page-title {
+        margin-bottom: 0;
+    }
+    h2.project-title {
+        margin-top: 0;
+        font-weight: 900;
+        font-size: 1.2em;
+        text-transform: uppercase;
+    }
+}

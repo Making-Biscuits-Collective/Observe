@@ -1,0 +1,26 @@
+.modal {
+    position: absolute;
+    background-color: white;
+    width: 600px;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    border-radius: 10px;
+    padding: 2em;
+    z-index: 10;
+    &-title {
+        font-weight: 900;
+        margin: 0;
+    }
+}
+
+.overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    background-color: black;
+    opacity: 0.6;
+    z-index: 9;
+}

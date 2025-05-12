@@ -1,0 +1,60 @@
+button {
+    font-family: 'Raleway Variable', sans-serif;
+    transition: all 0.3s ease-in-out;
+    width: fit-content;
+    &.small {
+        font-size: 0.8em !important;
+    }
+    &:hover {
+        cursor: pointer;
+    }
+    &.primary, &.invert {
+        border-radius: 10px;
+        font-size: 1.1em;
+        font-weight: 700;
+        padding: 0.3em 1em;
+    }
+    &.primary {
+        background-color: black;
+        border: 2px black solid;
+        color: white;
+        &:hover {
+            background-color: transparent;
+            color: black;
+        }
+    }
+    &.invert {
+        background-color: white;
+        border: 2px white solid;
+        color: black;
+        &:hover {
+            background-color: transparent;
+            color: white;
+        }
+    }
+    &.cta {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8em;
+        background-color: black;
+        color: white;
+        border: 2px black solid;
+        padding: 0.5em 1em;
+        border-radius: 10px;
+        &:hover {
+            background-color: transparent;
+            color: black;
+        }
+    }
+    &.text {
+        font-weight: 800;
+        background-color: transparent;
+        text-transform: uppercase;
+        border: 0;
+        border-bottom: 2px transparent solid;
+        height: fit-content;
+        &:hover {
+            border-bottom: 2px black solid;
+        }
+    }
+}

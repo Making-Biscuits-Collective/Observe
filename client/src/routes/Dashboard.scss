@@ -1,0 +1,49 @@
+.observe-dashboard {
+    section.title {
+        margin: 2em auto;
+    }
+    .page-actions {
+        display: flex;
+        margin: 1em 0;
+    }
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5em;
+        .project-grid-card {
+            grid-column: span 1;
+        }
+    }
+    .input-cell {
+        width: 100%;
+        margin: 1em 0;
+        input, textarea {
+            width: 100%;
+            margin-bottom: 0.5em;
+        }
+        textarea {
+            height: 200px;
+        }
+    }
+    .dashboard-actions {
+        margin: 2em auto;
+    }
+}
+
+.new-project-modal {
+    h2.modal-title {
+        font-weight: 900;
+        font-size: 1.5em;
+    }
+    display: flex;
+    gap: 1em;
+    flex-direction: column;
+    .input-block {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    textarea.new-project-description {
+        height: 150px;
+    }
+}

@@ -1,0 +1,11 @@
+section.loading {
+    margin: 5em auto;
+    .loading-content {
+        display: flex;
+        justify-content: center;
+    }
+    span.loading-text {
+        font-weight: 800;
+        font-size: 1.5em;
+    }
+}
