@@ -1,7 +1,7 @@
 import LayoutWrapper from "../partials/LayoutWrapper";
-import { supabase } from '../utils/supabase';
+import { getProjects, createNewProject } from '../utils/supabase';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Project } from "../types/types";
+import { Project, Data } from "../types/types";
 import ProjectCard from "../components/ProjectCard";
 import Alert, {AlertType} from "../components/Alert";
 import './Dashboard.scss';
@@ -20,12 +20,12 @@ type NewProjectStatus = "IDLE" | "CONF" | "ERR";
 const ModalContent = ({
     newProject,
     setNewProject,
-    createNewProject,
+    onCreateNewProjectClick,
     setNewProjectModalIsOpen
 } : {
     newProject: NewProject,
     setNewProject: Dispatch<SetStateAction<NewProject>>,
-    createNewProject: () => {},
+    onCreateNewProjectClick: () => void,
     setNewProjectModalIsOpen: Dispatch<SetStateAction<boolean>>
 }) => (
     <div className="new-project-modal">
@@ -92,7 +92,7 @@ const ModalContent = ({
             />
         </div>
         <div className="flex-centered">
-            <Button label="Create" variation="primary" onClick={() => createNewProject()}/>
+            <Button label="Create" variation="primary" onClick={onCreateNewProjectClick}/>
             <Button label="Cancel" variation="primary" onClick={() => setNewProjectModalIsOpen(false)}/>
         </div>
     </div>
@@ -101,6 +101,7 @@ const ModalContent = ({
 const Dashboard = () => {
 
     const [newProjectModalIsOpen, setNewProjectModalIsOpen] = useState<boolean>(false);
+    console.log("New Modal Open: " + newProjectModalIsOpen);
     const [newProject, setNewProject] = useState<NewProject>({
         title: '',
         description: '',
@@ -114,38 +115,34 @@ const Dashboard = () => {
         return "CONF";
     }
 
-    async function getProjects() {
+    const getProjectList = ({ data, error } : Data<Project[]>) => {
         console.log('Fetching projects...')
-        const { data: projects, error } = await supabase.from('projects').select('*');
-        if (projects) {
-            setProjectList(projects);
+        if (data) {
+            setProjectList(data);
         } else {
             console.log(error);
         }
     }
 
-    async function createNewProject() {
+    const onCreateNewProjectClick = () => {
         console.log('Creating project...')
-        const { data: projects, error } = await supabase.from('projects').insert([
-            { 
-                title: newProject.title,
-                description: newProject.description,
-            },
-        ]).select();
-        setNewProjectStatus("CONF");
-        setAlertOpen(true);
-        console.log('Created Project', projects);
+        createNewProject(newProject).then(({data: projects, error}) => {
+            setNewProjectStatus("CONF");
+            setAlertOpen(true);
+            console.log('Created Project', projects);
+        })
     }
 
     const [projectList, setProjectList] = useState<Project[]>([]);
 
     useEffect(() => {
-        getProjects();
+        getProjects().then(({data, error}) => getProjectList({data, error}));
     }, [])
 
     useEffect(() => {
         if (newProjectStatus == "CONF") {
             setAlertOpen(true);
+            setNewProjectModalIsOpen(false);
         } else if (newProjectStatus == "ERR") {
             setAlertOpen(true);
         }
@@ -167,7 +164,7 @@ const Dashboard = () => {
             <ModalContent 
                 newProject={newProject}
                 setNewProject={setNewProject}
-                createNewProject={createNewProject}
+                onCreateNewProjectClick={onCreateNewProjectClick}
                 setNewProjectModalIsOpen={setNewProjectModalIsOpen}
             />
         </Modal>}

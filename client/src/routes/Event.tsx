@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import LayoutWrapper from '../partials/LayoutWrapper';
-import { Event as EventType } from '../types/types';
-import { getImageURLFromBucket, supabase } from '../utils/supabase';
+import { Event as EventType, Data } from '../types/types';
+import { getEventById, getProjectById, getImageURLFromBucket} from '../utils/supabase';
 import './Event.scss';
 import Button from '../components/Button';
 
@@ -21,12 +21,8 @@ const Event = () => {
     const [projectDesc, setProjectDesc] = useState('');
     const [loadedMapURL, setLoadedMapURL] = useState('');
 
-    async function getEventById() {
-        const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('id', eventId)
-        .limit(1) as { data: EventType[] | null, error: any }; 
+    const getEventInfo = ({data, error}: Data<EventType[]>) => {
+
 
         if (error) {
             console.error('Oops, we had trouble fetching the event data!', error);
@@ -44,27 +40,31 @@ const Event = () => {
                 // Grab Project Data as well
                 if (eventInfo) {
                     setEventData(eventInfo);
-
-                    const { data, error } = await supabase 
-                    .from('projects')
-                    .select('title, description')
-                    .eq('id', eventInfo.project)
+                    console.log(eventInfo);
+                    getProjectById(eventInfo.project, 'title, description').then(({data, error})=> {
+                        if (error) {
+                            console.log('Error fetching project data');
+                        }
+                        const dataProjectName: string | undefined = data?.[0].title;
+                        const dataProjectDesc: string | undefined = data?.[0].description;
+                        setProjectName(dataProjectName || '');
+                        setProjectDesc(dataProjectDesc || '');
+                    })
+                    
                     
                     if (error) {
                         console.log('Error fetching project data');
                     }
 
-                    const dataProjectName: string | undefined = data?.[0].title;
-                    const dataProjectDesc: string | undefined = data?.[0].description;
-                    setProjectName(dataProjectName || '');
-                    setProjectDesc(dataProjectDesc || '');
                 }
             }
         }
     }
 
     useEffect(() => {
-        getEventById();
+        getEventById(eventId).then(({ data, error }) => {
+            getEventInfo({ data: data as EventType[] | null, error });
+          });
         console.log(eventData);
     }, [])
 

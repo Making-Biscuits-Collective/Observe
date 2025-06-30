@@ -2,13 +2,13 @@ import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import LayoutWrapper from '../partials/LayoutWrapper';
 import Breadcrumb from '../components/Breadcrumb';
+import './NewEvent.scss';
+import { Project as ProjectType, Data } from '../types/types';
+import { supabase, getProjectById } from '../utils/supabase';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { generateUUID } from '../utils/util';
 import { Event } from '../types/types';
-import { supabase } from '../utils/supabase';
-import './NewEvent.scss';
-import Alert from '../components/Alert';
 
 type ProjectTitle = { title: string }
 type CreateProject = 'IDLE' | 'ERROR' | 'CONF';
@@ -100,12 +100,8 @@ const NewEvent = () => {
         setEventCreated(false);
     }
 
-    async function getBasicProjectInfo() {
-        const { data, error } = await supabase
-        .from('projects')
-        .select('title')
-        .eq('id', projectId)
-        .limit(1) as { data: ProjectTitle[] | null, error: any }; 
+    const getBasicProjectInfo = ({data, error}: Data<ProjectType[]>) =>{
+
 
         if (error) {
             console.error('Hmm, it looks like this project does not exist!');
@@ -141,7 +137,8 @@ const NewEvent = () => {
     }
 
     useEffect(() => {
-        getBasicProjectInfo();
+        getProjectById(projectId, 'title').then(({data, error}) => 
+            getBasicProjectInfo({data, error}));
     }, [])
 
     useEffect(() => {

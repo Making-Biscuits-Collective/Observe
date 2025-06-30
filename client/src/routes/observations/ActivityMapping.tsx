@@ -2,23 +2,9 @@ import { useState, useEffect, Dispatch, SetStateAction, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import LayoutWrapper from '../../partials/LayoutWrapper';
 import './ActivityMapping.scss';
-import { ActivityMapping as ActivityMappingType } from '../../types/types';
-import { supabase, getImageURLFromBucket } from '../../utils/supabase';
+import { ActivityMapping as ActivityMappingType, FilteredEventInfo, ObservationData, Data } from '../../types/types';
+import { supabase, getImageURLFromBucket, getEventById } from '../../utils/supabase';
 
-export type ObservationData = {
-    name: string;
-    date: string;
-    time: string;
-    temperature?: string;
-    weather?: string;
-    notes?: string;
-    data_points?: Array<string>;
-}
-
-type FilteredEventInfo = {
-    title: string;
-    map_path: string;
-}
 
 const Selectors = ({activityType, setActivityType} : {
     activityType: ActivityMappingType,
@@ -92,16 +78,8 @@ const ActivityMapping = () => {
     //     }
     // }
 
-    async function getEventById() {
-        const { data, error } = await supabase
-        .from('events')
-        .select('title, map_path')
-        .eq('id', eventId)
-        .limit(1) as { data: [{
-            title: string;
-            map_path: string;
-        }] | null, error: any }; 
-
+    const getEventInfo = ({ data, error } : Data<FilteredEventInfo[]>) => {
+        
         if (error) {
             console.error(error);
         } else {
@@ -117,7 +95,8 @@ const ActivityMapping = () => {
     }
 
     useEffect(() => {
-        getEventById();
+        getEventById(eventId, 'title, map_path').then(({data, error}) => 
+            getEventInfo({data, error}))
     }, [])
 
     return (

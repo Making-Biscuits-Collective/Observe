@@ -1,11 +1,18 @@
 import { useParams } from 'react-router-dom';
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import LayoutWrapper from "../partials/LayoutWrapper";
-import { supabase, getImageURLFromBucket } from '../utils/supabase';
+import {
+    supabase,
+    getImageURLFromBucket,
+    updateProject,
+    getProjectById,
+    getEventsByProjectId
+} from '../utils/supabase';
 import { 
     ProjectLoadingState, 
     Project as ProjectType,
-    Event as EventType
+    Event as EventType,
+    Data
 } from '../types/types';
 import Loading from '../components/Loading';
 import './Project.scss';
@@ -142,18 +149,12 @@ const EditableProjectContent = ({
     // Edited Project State
     const [editedTitle, setEditedTitle] = useState<string>(title);
 
-    async function updateProject() {
-        const { 
-            status,
-            error
-        } = await supabase
-        .from('projects')
-        .update({
-            title: editedTitle
-        }) 
-        .eq('id', projectId)
-        .select();
-
+    const onEditProjectClick = () => {
+        
+        updateProject({
+            title: editedTitle,
+            id: projectId
+        }).then(({status, error}) => {
         if (error) {
             console.log('Error updating project');
             updateEditStatus("ERR");
@@ -167,6 +168,7 @@ const EditableProjectContent = ({
         }
  
         console.log('Project updated!')
+    })
     }
 
     return (
@@ -174,7 +176,7 @@ const EditableProjectContent = ({
             {editMode && 
                 <div className="toolbar">
                     <div className="toolbar-actions">
-                        <Button variation="primary" label="Save Changes" onClick={() => updateProject()}/>
+                        <Button variation="primary" label="Save Changes" onClick={onEditProjectClick}/>
                         <Button variation="primary" label="Cancel" onClick={() => setEditMode(false)}/>
                     </div>
                 </div>
@@ -262,9 +264,9 @@ const ProjectContent = ({
                     startDate={start_date}
                     endDate={end_date}
                     imagePath={image_path}
-                    shortDescription={shortDescription}
-                    description={description}
-                    projectId={projectId}
+                    shortDescription={shortDescription || ''}
+                    description={description || ''}
+                    projectId={projectId || 0}
                     updateEditStatus={setEditedStatus}
                     isAlertOpen={isAlertOpen}
                     setIsAlertOpen={setIsAlertOpen}
@@ -293,14 +295,8 @@ const Project = () => {
     /**
      * Grabs project data by the given project ID
      */
-    async function getProjectById() {
+    const getProjectInfo = ({ data, error }: Data<ProjectType[]>) => {
        
-        const { data, error } = await supabase
-        .from('projects')
-        .select('*') // Or specify columns like 'id,name,...'
-        .eq('id', projectId)
-        .limit(1) as { data: ProjectType[] | null, error: any }; 
-
         if (error) {
             console.log('This project does not exist or something went wrong.')
             setProjectLoadingState("ERROR")
@@ -319,22 +315,21 @@ const Project = () => {
             });
             
             setLoadedProjectImageURL(projectData.image_path);
-            const { data: eventsData, error } = 
-                await supabase
-                    .from('events')
-                    .select('*')
-                    .eq('project', projectId) as { data: EventType[] | null, error: any}
             
-            if (error) {
-                console.error('There was a problem fetching events for this project.');
-                setProjectLoadingState("ERROR");
-            }
 
-            if (eventsData) {
-                setEvents(eventsData);
-            }
-
-            setProjectLoadingState("LOADED")
+            getEventsByProjectId(projectId).then(({data: eventsData, error}) => {
+            
+                if (error) {
+                    console.error('There was a problem fetching events for this project.');
+                    setProjectLoadingState("ERROR");
+                }
+            
+                if (eventsData) {
+                    setEvents(eventsData);
+                }
+            
+                setProjectLoadingState("LOADED")
+        })
         } 
 
     }
@@ -343,7 +338,7 @@ const Project = () => {
      * Fire on mount
      */
     useEffect(() => {
-        getProjectById();
+        getProjectById(projectId).then(({data, error}) => getProjectInfo({data, error}));
     }, [])
 
     return (
