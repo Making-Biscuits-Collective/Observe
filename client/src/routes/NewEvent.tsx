@@ -4,12 +4,10 @@ import LayoutWrapper from '../partials/LayoutWrapper';
 import { Event } from '../types/types';
 import Breadcrumb from '../components/Breadcrumb';
 import './NewEvent.scss';
-import { Project as ProjectType } from '../types/types';
-import { supabase } from '../utils/supabase';
+import { Project as ProjectType, Data } from '../types/types';
+import { supabase, getProjectById } from '../utils/supabase';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
-
-type ProjectTitle = { title: string }
 
 const NewEventConfirmation = ({
     projectId,
@@ -78,6 +76,8 @@ const NewEvent = () => {
         notes: '',
     });
 
+    console.log(eventInfo);
+
     const [mapFile, setMapFile] = useState<File | null>(null);
     const [mapPreviewUrl, setMapPreviewUrl] = useState('');
     const [eventCreated, setEventCreated] = useState<boolean>(false);
@@ -95,12 +95,8 @@ const NewEvent = () => {
         setEventCreated(false);
     }
 
-    async function getBasicProjectInfo() {
-        const { data, error } = await supabase
-        .from('projects')
-        .select('title')
-        .eq('id', projectId)
-        .limit(1) as { data: ProjectTitle[] | null, error: any }; 
+    const getBasicProjectInfo = ({data, error}: Data<ProjectType[]>) =>{
+
 
         if (error) {
             console.error('Hmm, it looks like this project does not exist!');
@@ -136,7 +132,7 @@ const NewEvent = () => {
     }
 
     useEffect(() => {
-        getBasicProjectInfo();
+        getProjectById(projectId, 'title').then(({data, error}) => getBasicProjectInfo({data, error}));
     }, [])
 
     useEffect(() => {

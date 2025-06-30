@@ -1,8 +1,8 @@
 export type Project = {
     title: string;
-    short_description: string;
-    description: string;
-    id: number;
+    short_description?: string;
+    description?: string;
+    id?: number;
     status?: string; //TODO: enum
     start_date?: string;
     end_date?: string;
@@ -13,12 +13,42 @@ export type ProjectLoadingState = "LOADING" | "LOADED" | "ERROR"
 
 export type Event = {
     title: string;
-    start_date: string;
-    location: string;
     map_path: string;
+    start_date?: string;
+    location?: string;
     notes?: string;
     id?: string;
     project?: string;
 }
 
 export type ActivityMapping = "SITTING" | "STANDING" | "OTHER"
+
+export type NewProject = {
+    title: string;
+    description: string;
+    imagePath: string;
+    start_date?: string;
+}
+
+export type NewProjectStatus = "IDLE" | "CONF" | "ERR"
+
+export type ObservationData = {
+    name: string;
+    date: string;
+    time: string;
+    temperature?: string;
+    weather?: string;
+    notes?: string;
+    data_points?: Array<string>;
+}
+
+export type FilteredEventInfo = {
+    title: string;
+    map_path: string;
+}
+
+
+export type Data<T> = {
+    data: T | null;
+    error: any;
+};
