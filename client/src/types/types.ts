@@ -24,15 +24,6 @@ export type Event = {
 
 export type ActivityMapping = "SITTING" | "STANDING" | "OTHER"
 
-export type NewProject = {
-    title: string;
-    description: string;
-    imagePath: string;
-    start_date?: string;
-}
-
-export type NewProjectStatus = "IDLE" | "CONF" | "ERR"
-
 export type ObservationData = {
     name: string;
     date: string;

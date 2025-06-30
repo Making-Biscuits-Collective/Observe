@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { Project, NewProject, Data, FilteredEventInfo, Event} from "../types/types";
+import { Project, Data, FilteredEventInfo, Event} from "../types/types";
 
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://bbfbqkwysuphjuptffpu.supabase.co';
@@ -41,7 +41,7 @@ export async function getProjectById(projectId: string | undefined, selectParams
     .limit(1) as Data<Project[]>
 }
 
-export async function createNewProject(newProject: NewProject) {
+export async function createNewProject(newProject: Project) {
     return await supabase.from('projects').insert([
         { 
             title: newProject.title,

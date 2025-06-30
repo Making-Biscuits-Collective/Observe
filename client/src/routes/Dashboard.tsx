@@ -1,13 +1,21 @@
 import LayoutWrapper from "../partials/LayoutWrapper";
 import { getProjects, createNewProject } from '../utils/supabase';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Project, NewProject, NewProjectStatus, Data } from "../types/types";
+import { Project, Data } from "../types/types";
 import ProjectCard from "../components/ProjectCard";
 import Alert, {AlertType} from "../components/Alert";
 import './Dashboard.scss';
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 
+type NewProject = {
+    title: string;
+    description: string;
+    imagePath: string;
+    start_date?: string;
+}
+
+type NewProjectStatus = "IDLE" | "CONF" | "ERR";
 
 const ModalContent = ({
     newProject,
