@@ -28,7 +28,9 @@ export async function getImageURLFromBucket({
 }
 
 export async function getProjects() {
-    return await supabase.from('projects').select('*') as Data<Project[]>
+    return await supabase
+    .from('projects')
+    .select('*') as Data<Project[]>
 }
 
 export async function getProjectById(projectId: string | undefined, selectParams?: string) {
