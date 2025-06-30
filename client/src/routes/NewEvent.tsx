@@ -9,8 +9,6 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { generateUUID } from '../utils/util';
 import { Event } from '../types/types';
-import './NewEvent.scss';
-import Alert from '../components/Alert';
 
 type ProjectTitle = { title: string }
 type CreateProject = 'IDLE' | 'ERROR' | 'CONF';
