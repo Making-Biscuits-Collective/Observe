@@ -15,7 +15,7 @@ const Alert = ({
     variation: AlertType,
     isOpen: boolean,
     setIsOpen: Dispatch<SetStateAction<boolean>>,
-    customCallback?: () => {}
+    customCallback?: () => void
 }) => {
 
     const nodeRef = useRef(null);
@@ -41,7 +41,7 @@ const Alert = ({
                     className={`alert ${variation} ${state}`}
                     ref={nodeRef}
                 >
-                    <span className="alert-icon">!</span>
+                    <span className="alert-icon"></span>
                     <span className="alert-message">{message}</span>
                 </div>
             )}

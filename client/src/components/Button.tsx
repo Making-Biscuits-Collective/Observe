@@ -16,7 +16,8 @@ const Button = (
         label, 
         url, 
         onClick,
-        size
+        size,
+        disabled
     } : 
     {
         variation: ButtonType,
@@ -24,11 +25,16 @@ const Button = (
         url?: string,
         onClick?: MouseEventHandler<HTMLButtonElement>,
         size?: ButtonSize,
+        disabled?: boolean
     }) =>
 {
     return (
         <>
-        <button className={`${variation} ${size}`} onClick={onClick}>
+        <button 
+            className={`${variation} ${size ?? ''}`} 
+            onClick={onClick}
+            { ... (disabled && { disabled }) }
+        >
             {label}
         </button>
         </>

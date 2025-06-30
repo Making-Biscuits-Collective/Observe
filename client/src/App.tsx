@@ -1,6 +1,6 @@
 import React, { ReactElement, ReactNode, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Landing from './routes/Landing';
 import Project from './routes/Project';
 import Dashboard from './routes/Dashboard';
@@ -34,10 +34,6 @@ function App() {
   //   }
   //   getToken();
   // }, [])
-
-  useEffect(() => {
-    console.log('User Logged In: ', isAuthenticated);
-  }, [isAuthenticated])
 
   return (
     <div>

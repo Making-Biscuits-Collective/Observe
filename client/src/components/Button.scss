@@ -2,10 +2,14 @@ button {
     font-family: 'Raleway Variable', sans-serif;
     transition: all 0.3s ease-in-out;
     width: fit-content;
+    &:disabled,
+    &[disabled] {
+        opacity: 0.5;
+    }
     &.small {
         font-size: 0.8em !important;
     }
-    &:hover {
+    &:not([disabled]):hover {
         cursor: pointer;
     }
     &.primary, &.invert {
@@ -18,7 +22,7 @@ button {
         background-color: black;
         border: 2px black solid;
         color: white;
-        &:hover {
+        &:not([disabled]):hover {
             background-color: transparent;
             color: black;
         }

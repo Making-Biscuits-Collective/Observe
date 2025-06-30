@@ -13,9 +13,10 @@ export type ProjectLoadingState = "LOADING" | "LOADED" | "ERROR"
 
 export type Event = {
     title: string;
+    date: string;
+    location: string;
     map_path: string;
     start_date?: string;
-    location?: string;
     notes?: string;
     id?: string;
     project?: string;

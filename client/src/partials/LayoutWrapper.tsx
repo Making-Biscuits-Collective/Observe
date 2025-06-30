@@ -11,14 +11,18 @@ const LayoutWrapper = ({children} : {children: ReactNode}) => {
     const [accountName, setAccountName] = useState('');
 
     useEffect(() => {
-        if (user?.email) {
-            setAccountName(user.email)
+        if (user?.name) {
+            setAccountName(user?.name);
+        } else if (user?.email) {
+            setAccountName(user?.email);
+        } else if (isAuthenticated) {
+            setAccountName('User');
         }
     }, [isAuthenticated])
 
     const AccountDetails = () => {
         if (isAuthenticated) {
-            return (<span className="account-info">Signed in as <strong>{accountName}</strong></span>);
+            return (<span className="account-info">Logged In as <strong>{accountName}</strong></span>);
         }
         return (<span>Login to Access</span>);
     }
@@ -52,7 +56,7 @@ const LayoutWrapper = ({children} : {children: ReactNode}) => {
                         <div className="user-ctas">
                             <AccountDetails />
                             <div className="call-to-actions">
-                                <Button label="Settings" variation="cta"/>
+                                <Button label="Account" variation="cta"/>
                                 <Button label="Logout" variation="cta"/>
                             </div>
                         </div>

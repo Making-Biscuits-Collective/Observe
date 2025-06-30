@@ -1,13 +1,19 @@
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import LayoutWrapper from '../partials/LayoutWrapper';
-import { Event } from '../types/types';
 import Breadcrumb from '../components/Breadcrumb';
 import './NewEvent.scss';
 import { Project as ProjectType, Data } from '../types/types';
 import { supabase, getProjectById } from '../utils/supabase';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
+import { generateUUID } from '../utils/util';
+import { Event } from '../types/types';
+import './NewEvent.scss';
+import Alert from '../components/Alert';
+
+type ProjectTitle = { title: string }
+type CreateProject = 'IDLE' | 'ERROR' | 'CONF';
 
 const NewEventConfirmation = ({
     projectId,
@@ -65,29 +71,30 @@ const NewEventConfirmation = ({
 const NewEvent = () => {
 
     const { projectId } = useParams();
+    const navigate = useNavigate();
 
     const [projectName, setProjectName] = useState<string>('');
     const [validProjectState, setValidProjectState] = useState<boolean>(true);
     const [eventInfo, setEventInfo] = useState<Event>({
         title: '',
-        start_date: '',
+        date: '',
         location: '',
         map_path: '',
         notes: '',
     });
 
-    console.log(eventInfo);
-
+    const [createStatus, setCreateStatus] = useState<CreateProject>('IDLE');
     const [mapFile, setMapFile] = useState<File | null>(null);
     const [mapPreviewUrl, setMapPreviewUrl] = useState('');
     const [eventCreated, setEventCreated] = useState<boolean>(false);
     const [newEventId, setNewEventId] = useState<string>('');
+    const [disableSubmission, setDisableSubmission] = useState<boolean>(true);
 
     function resetValues() {
         setProjectName('');
         setEventInfo({
             title: '',
-            start_date: '',
+            date: '',
             location: '',
             map_path: '',
             notes: '',
@@ -146,14 +153,23 @@ const NewEvent = () => {
         return () => URL.revokeObjectURL(objectURL);
     }, [mapFile])
 
-    async function createEvent() {
+    useEffect(() => {
+        if (mapFile && (
+                eventInfo.title?.length > 0 &&
+                eventInfo.date?.length > 0 &&
+                eventInfo.location?.length > 0 &&
+                eventInfo.map_path?.length > 0
+            )) {
+            setDisableSubmission(false);
+        }
+    }, [mapFile, eventInfo])
 
-        console.log('Creating event...')
+    async function createEvent() {
         if (mapFile) { // Upload this to the event maps bucket
             const { data: image, error: mapError } = await supabase
             .storage
             .from('event-maps')
-            .upload(mapFile.name, mapFile);
+            .upload(generateUUID(), mapFile);
 
             if (mapError) {
                 console.error('There was a problem uploading your event map.', mapError);
@@ -164,7 +180,7 @@ const NewEvent = () => {
             .insert([
                 { 
                     title: eventInfo.title,
-                    start_date: eventInfo.start_date,
+                    date: eventInfo.date,
                     location: eventInfo.location,
                     map_path: image?.path,
                     notes: eventInfo.notes,
@@ -174,15 +190,15 @@ const NewEvent = () => {
 
             if (dataError) {
                 console.error('There was a problem creating this event.', dataError);
+                setCreateStatus('ERROR');
+            } else {
+                const newEvent: Event | null = event?.[0];
+                if (newEvent?.id) {
+                    setNewEventId(newEvent.id);
+                }
+                setEventCreated(true);
+                setCreateStatus('CONF');
             }
-
-            console.log('Created Event', event?.[0]);
-
-            const newEvent: Event | null = event?.[0];
-            if (newEvent?.id) {
-                setNewEventId(newEvent.id);
-            }
-            setEventCreated(true);
         }
     }
 
@@ -199,9 +215,11 @@ const NewEvent = () => {
                     <div className="new-event-form">
                         <div className="text-form">
                             <div className="new-event-intro">
-                            You are creating a new event for <Link to="">{projectName}</Link>. If you want to create an event 
+                            <p>You are creating a new event for <Link to="">{projectName}</Link>. If you want to create an event 
                             for a different project, please do so from that project's event page. Visit the "Projects" tab in the 
-                            navigation to view all projects you have access to.
+                            navigation to view all projects you have access to.</p>
+
+                            <p>Once you finish creating your event, you'll be able to add observations.</p>
                             </div>
                             <div className="input-box">
                                 <label htmlFor="event-title" className="required">Event Title</label>
@@ -227,7 +245,7 @@ const NewEvent = () => {
                                     onChange={(event) => setEventInfo(
                                         (prevState) => ({
                                             ...prevState,
-                                            start_date: event.target.value
+                                            date: event.target.value
                                         })
                                     )}
                                 />
@@ -258,7 +276,7 @@ const NewEvent = () => {
                                 <textarea 
                                     id="event-notes" 
                                     value={eventInfo.notes}
-                                    placeholder="Event Location"
+                                    placeholder="Any additional notes"
                                     onChange={(event) => setEventInfo(
                                         (prevState) => ({
                                             ...prevState,
@@ -271,6 +289,7 @@ const NewEvent = () => {
                                 variation="primary"
                                 label="Create Event"
                                 onClick={() => createEvent()}
+                                disabled={disableSubmission}
                             />
                             <NewEventConfirmation 
                                 projectId={projectId || ''}
@@ -302,6 +321,7 @@ const NewEvent = () => {
                             />
                             <div className="image-preview-container">
                                 {mapPreviewUrl && <img src={mapPreviewUrl} />}
+                                {!mapPreviewUrl && <p>Please upload an image for your map.</p>}
                             </div>
                         </div>
                     </div>
