@@ -56,17 +56,15 @@ const Event = () => {
                         console.log('Error fetching project data');
                     }
 
-                    const dataProjectName: string | undefined = data?.[0].title;
-                    const dataProjectDesc: string | undefined = data?.[0].description;
-                    setProjectName(dataProjectName || '');
-                    setProjectDesc(dataProjectDesc || '');
                 }
             }
         }
     }
 
     useEffect(() => {
-        getEventById(eventId).then(({data, error}) => getEventInfo({data, error}))
+        getEventById(eventId).then(({ data, error }) => {
+            getEventInfo({ data: data as EventType[] | null, error });
+          });
         console.log(eventData);
     }, [])
 
