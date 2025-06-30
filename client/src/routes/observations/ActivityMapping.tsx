@@ -95,7 +95,8 @@ const ActivityMapping = () => {
     }
 
     useEffect(() => {
-        getEventById(eventId, 'title, map_path').then(({data, error}) => getEventInfo({data, error}))
+        getEventById(eventId, 'title, map_path').then(({data, error}) => 
+            getEventInfo({data, error}))
     }, [])
 
     return (

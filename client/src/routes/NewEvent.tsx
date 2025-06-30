@@ -139,7 +139,8 @@ const NewEvent = () => {
     }
 
     useEffect(() => {
-        getProjectById(projectId, 'title').then(({data, error}) => getBasicProjectInfo({data, error}));
+        getProjectById(projectId, 'title').then(({data, error}) => 
+            getBasicProjectInfo({data, error}));
     }, [])
 
     useEffect(() => {
