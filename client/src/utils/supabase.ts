@@ -17,7 +17,7 @@ export async function getImageURLFromBucket({
         imagePath.length > 0 ? imagePath : 'default.png'
     ) : 'default.png';
 
-    const { data } = await supabase
+    const { data } = supabase
         .storage
         .from(bucket)
         .getPublicUrl(pathToUse);

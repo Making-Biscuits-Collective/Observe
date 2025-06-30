@@ -33,7 +33,7 @@ const EventsView = ({
                     <span className="icon">
                         <img src="/icon/calendar.svg" width={16}/>
                     </span>
-                    {eventData?.start_date}
+                    {eventData?.date}
                 </div>
                 <div className="event-card-detail">
                     <span className="icon">

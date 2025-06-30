@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import Button from '../components/Button';
 import './Landing.scss';
+import { useNavigate } from 'react-router-dom';
 
 const ObserveHeader = () => (
     <div className="front-page-header">
@@ -35,7 +36,16 @@ const ObserveHeader = () => (
 const Landing = () => { 
     const { 
         loginWithRedirect, 
+        isAuthenticated
       } = useAuth0();
+
+      const navigate = useNavigate();
+
+      useEffect(() => {
+        if (isAuthenticated) {
+          navigate('/dashboard');
+        }
+      }, [isAuthenticated])
 
     return (
     <div className="observe-loaded">
