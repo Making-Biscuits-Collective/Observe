@@ -2,13 +2,12 @@ import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import LayoutWrapper from '../partials/LayoutWrapper';
 import Breadcrumb from '../components/Breadcrumb';
+import './NewEvent.scss';
+import { Project as ProjectType, Data } from '../types/types';
+import {getProjectById, uploadEventMap, createNewEvent } from '../utils/supabase';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
-import { generateUUID } from '../utils/util';
 import { Event } from '../types/types';
-import { supabase } from '../utils/supabase';
-import './NewEvent.scss';
-import Alert from '../components/Alert';
 
 type ProjectTitle = { title: string }
 type CreateProject = 'IDLE' | 'ERROR' | 'CONF';
@@ -100,12 +99,8 @@ const NewEvent = () => {
         setEventCreated(false);
     }
 
-    async function getBasicProjectInfo() {
-        const { data, error } = await supabase
-        .from('projects')
-        .select('title')
-        .eq('id', projectId)
-        .limit(1) as { data: ProjectTitle[] | null, error: any }; 
+    const getBasicProjectInfo = ({data, error}: Data<ProjectType[]>) =>{
+
 
         if (error) {
             console.error('Hmm, it looks like this project does not exist!');
@@ -141,7 +136,8 @@ const NewEvent = () => {
     }
 
     useEffect(() => {
-        getBasicProjectInfo();
+        getProjectById(projectId, 'title').then(({data, error}) => 
+            getBasicProjectInfo({data, error}));
     }, [])
 
     useEffect(() => {
@@ -166,41 +162,37 @@ const NewEvent = () => {
         }
     }, [mapFile, eventInfo])
 
-    async function createEvent() {
+    const createEvent = () => {
         if (mapFile) { // Upload this to the event maps bucket
-            const { data: image, error: mapError } = await supabase
-            .storage
-            .from('event-maps')
-            .upload(generateUUID(), mapFile);
 
-            if (mapError) {
-                console.error('There was a problem uploading your event map.', mapError);
-            }
+            uploadEventMap(mapFile).then(({ data: image, error: mapError }) => {
 
-            const { data: event, error: dataError } = await supabase
-            .from('events')
-            .insert([
-                { 
+                if (mapError) {
+                    console.error('There was a problem uploading your event map.', mapError);
+                }
+
+                createNewEvent({ 
                     title: eventInfo.title,
                     date: eventInfo.date,
                     location: eventInfo.location,
-                    map_path: image?.path,
+                    map_path: image?.path as string,
                     notes: eventInfo.notes,
                     project: projectId 
-                }
-            ]).select();
+                }).then(({ data: event, error: dataError}) => {
 
-            if (dataError) {
-                console.error('There was a problem creating this event.', dataError);
-                setCreateStatus('ERROR');
-            } else {
-                const newEvent: Event | null = event?.[0];
-                if (newEvent?.id) {
-                    setNewEventId(newEvent.id);
-                }
-                setEventCreated(true);
-                setCreateStatus('CONF');
-            }
+                    if (dataError) {
+                        console.error('There was a problem creating this event.', dataError);
+                        setCreateStatus('ERROR');
+                    } else {
+                        const newEvent: Event | null = event?.[0];
+                        if (newEvent?.id) {
+                            setNewEventId(newEvent.id);
+                        }
+                        setEventCreated(true);
+                        setCreateStatus('CONF');
+                    }
+                })
+            })
         }
     }
 

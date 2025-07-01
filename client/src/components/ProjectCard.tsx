@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Project } from '../types/types';
-import { getImageURLFromBucket, supabase } from '../utils/supabase';
+import { getImageURLFromBucket, getEventsByProjectId } from '../utils/supabase';
 import './ProjectCard.scss';
 
 const ProjectCard = ({projectData} : {projectData: Project}) => {
@@ -24,15 +24,13 @@ const ProjectCard = ({projectData} : {projectData: Project}) => {
         getTotalEvents();
     }, [])
 
-    async function getTotalEvents() {
-        const { data, error } = await supabase
-        .from('events')
-        .select('*') 
-        .eq('project', projectId);
-        if (error) {
+    const getTotalEvents = () => {
+        getEventsByProjectId(projectId).then(({data, error}) => {
+            if (error) {
             console.error('Something went wrong when trying to grab the number of events.')
-        }
-        setTotalEvents(data?.length ?? 0);
+            }
+            setTotalEvents(data?.length ?? 0);
+        })
     }
 
     return (

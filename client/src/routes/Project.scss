@@ -64,9 +64,22 @@
             }
         }
         .project-title {
+            display: flex;
+            align-items: center;
+        }
+        .project-title-text {
             font-weight: 900;
             font-size: 2em;
             margin: 0;
+        }
+
+        .project-title-delete {
+            padding-left: 12px;
+            padding-top: 8px;
+            &:hover {
+                filter: invert(75%);
+                cursor: pointer;
+            }
         }
         .project-date {
             font-weight: 800;
@@ -131,4 +144,22 @@
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.85);
         cursor: pointer;
     }
+}
+
+.delete-modal {
+    h2.modal-title {
+        font-weight: 900;
+        font-size: 1.5em;
+        display: flex;
+        justify-content: center;
+    }
+
+    div.modal-description {
+        font-weight: 600;
+        font-size: 1em;
+    }
+    display: flex;
+    gap: 1em;
+    flex-direction: column;
+
 }

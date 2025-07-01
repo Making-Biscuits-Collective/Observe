@@ -1,17 +1,26 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import LayoutWrapper from "../partials/LayoutWrapper";
-import { supabase, getImageURLFromBucket } from '../utils/supabase';
+import {
+    getImageURLFromBucket,
+    updateProject,
+    getProjectById,
+    getEventsByProjectId,
+    deleteProject
+} from '../utils/supabase';
 import { 
     ProjectLoadingState, 
     Project as ProjectType,
-    Event as EventType
+    Event as EventType,
+    Data
 } from '../types/types';
 import Loading from '../components/Loading';
 import './Project.scss';
 import Button from '../components/Button';
 import Alert, { AlertType } from '../components/Alert';
 import { Link } from 'react-router-dom';
+import Modal from "../components/Modal";
+
 
 const EventsView = ({
     events,
@@ -69,6 +78,28 @@ const EventsView = ({
     )
 }
 
+const ModalContent = ({
+    projectTitle,
+    confirmDelete,
+    setDeleteModalIsOpen
+} : {
+    projectTitle: string,
+    confirmDelete: () => void,
+    setDeleteModalIsOpen: Dispatch<SetStateAction<boolean>>
+}) => (
+    <div className="delete-modal">
+        <h2 className="modal-title">Are you sure?</h2>
+        <div className="modal-description">
+            Deleting {projectTitle} will also delete all associated events and observations. This action cannot be undone.
+        </div>
+    
+        <div className="flex-centered">
+            <Button label="Delete" variation="primary" onClick={confirmDelete}/>
+            <Button label="Cancel" variation="primary" onClick={() => setDeleteModalIsOpen(false)}/>
+        </div>
+    </div>
+)
+
 const ModeView = ({editMode, setEditMode} : {
     editMode: boolean,
     setEditMode: Dispatch<SetStateAction<boolean>>,
@@ -119,7 +150,8 @@ const EditableProjectContent = ({
     isAlertOpen,
     setIsAlertOpen,
     updateProjectData,
-    imageURL
+    imageURL,
+    setDeleteModalIsOpen
 } : {
     editMode: boolean,
     setEditMode: Dispatch<SetStateAction<boolean>>,
@@ -134,7 +166,8 @@ const EditableProjectContent = ({
     isAlertOpen: boolean,
     setIsAlertOpen: Dispatch<SetStateAction<boolean>>,
     updateProjectData: Dispatch<SetStateAction<ProjectType>>,
-    imageURL: string | undefined
+    imageURL: string | undefined,
+    setDeleteModalIsOpen: Dispatch<SetStateAction<boolean>>
 }) => {
 
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
@@ -142,39 +175,41 @@ const EditableProjectContent = ({
     // Edited Project State
     const [editedTitle, setEditedTitle] = useState<string>(title);
 
-    async function updateProject() {
-        const { 
-            status,
-            error
-        } = await supabase
-        .from('projects')
-        .update({
-            title: editedTitle
-        }) 
-        .eq('id', projectId)
-        .select();
+    const onEditProjectClick = () => {
+        
+        updateProject({
+            title: editedTitle,
+            id: projectId
+        }).then(({status, error}) => {
 
-        if (error) {
-            console.log('Error updating project');
-            updateEditStatus("ERR");
-            setIsAlertOpen(true);
-        } else {
-            console.log('Project updated successfully', status);
-            updateEditStatus("CONF");
-            setIsAlertOpen(true);
-            setEditMode(false);
-            updateProjectData(prevData => ({ ...prevData, title: editedTitle }))
-        }
- 
-        console.log('Project updated!')
+            if (error) {
+                console.log('Error updating project');
+                updateEditStatus("ERR");
+                setIsAlertOpen(true);
+            } else {
+                console.log('Project updated successfully', status);
+                updateEditStatus("CONF");
+                setIsAlertOpen(true);
+                setEditMode(false);
+                updateProjectData(prevData => ({ ...prevData, title: editedTitle }))
+            }
+        
+            console.log('Project updated!')
+        })
     }
+
+    useEffect(() => {
+        if(!editMode && editedTitle != title) {
+            setEditedTitle(title);
+        }
+    }, [editMode])
 
     return (
         <div className="container-max project-info">
             {editMode && 
                 <div className="toolbar">
                     <div className="toolbar-actions">
-                        <Button variation="primary" label="Save Changes" onClick={() => updateProject()}/>
+                        <Button variation="primary" label="Save Changes" onClick={onEditProjectClick}/>
                         <Button variation="primary" label="Cancel" onClick={() => setEditMode(false)}/>
                     </div>
                 </div>
@@ -194,7 +229,10 @@ const EditableProjectContent = ({
                         />
                     </>
                 : 
-                    <h1 className="project-title">{title}</h1>}
+                    <h1 className="project-title">
+                        <div className="project-title-text">{title}</div>
+                        <img src="/icon/delete.svg" className="project-title-delete" width={26} onClick={() => setDeleteModalIsOpen(true)}/>
+                    </h1>}
                 <h2 className="project-date">
                     <img src="/icon/calendar.svg" width={16}/>
                     {startDate}
@@ -219,11 +257,13 @@ const EditableProjectContent = ({
 const ProjectContent = ({
     projectData,
     updateProjectData,
-    loadedProjectImageURL
+    loadedProjectImageURL,
+    setDeleteModalIsOpen
 }: {
     projectData: ProjectType,
     updateProjectData: Dispatch<SetStateAction<ProjectType>>,
-    loadedProjectImageURL: string | undefined
+    loadedProjectImageURL: string | undefined,
+    setDeleteModalIsOpen: Dispatch<SetStateAction<boolean>>
 }) => {
 
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -240,6 +280,7 @@ const ProjectContent = ({
         id: projectId
     } = projectData;
 
+
     return (
         <>
             <section className="project">
@@ -247,7 +288,7 @@ const ProjectContent = ({
                     isOpen={isAlertOpen} 
                     setIsOpen={setIsAlertOpen}
                     variation={editedStatus}
-                    message="Your project was saved successfully" //TODO: update for failures
+                    message={`Your project was saved successfully`} //TODO: update for failures
                 />
                 <div className="container-max flex-centered">
                     <ModeView 
@@ -262,14 +303,15 @@ const ProjectContent = ({
                     startDate={start_date}
                     endDate={end_date}
                     imagePath={image_path}
-                    shortDescription={shortDescription}
-                    description={description}
-                    projectId={projectId}
+                    shortDescription={shortDescription || ''}
+                    description={description || ''}
+                    projectId={projectId || 0}
                     updateEditStatus={setEditedStatus}
                     isAlertOpen={isAlertOpen}
                     setIsAlertOpen={setIsAlertOpen}
                     updateProjectData={updateProjectData}
                     imageURL={loadedProjectImageURL}
+                    setDeleteModalIsOpen={setDeleteModalIsOpen}
                 />
             </section>
         </>
@@ -279,6 +321,9 @@ const ProjectContent = ({
 const Project = () => {
 
     const { projectId } = useParams();
+    const navigate = useNavigate();
+
+    const [deleteModalIsOpen, setDeleteModalIsOpen] = useState<boolean>(false);
 
     const [loadedProjectImageURL, setLoadedProjectImageURL] = useState<string | undefined>('');
     const [currentProjectData, setCurrentProjectData] = useState<ProjectType>({
@@ -293,14 +338,8 @@ const Project = () => {
     /**
      * Grabs project data by the given project ID
      */
-    async function getProjectById() {
+    const getProjectInfo = ({ data, error }: Data<ProjectType[]>) => {
        
-        const { data, error } = await supabase
-        .from('projects')
-        .select('*') // Or specify columns like 'id,name,...'
-        .eq('id', projectId)
-        .limit(1) as { data: ProjectType[] | null, error: any }; 
-
         if (error) {
             console.log('This project does not exist or something went wrong.')
             setProjectLoadingState("ERROR")
@@ -319,34 +358,55 @@ const Project = () => {
             });
             
             setLoadedProjectImageURL(projectData.image_path);
-            const { data: eventsData, error } = 
-                await supabase
-                    .from('events')
-                    .select('*')
-                    .eq('project', projectId) as { data: EventType[] | null, error: any}
             
-            if (error) {
-                console.error('There was a problem fetching events for this project.');
-                setProjectLoadingState("ERROR");
-            }
 
-            if (eventsData) {
-                setEvents(eventsData);
-            }
-
-            setProjectLoadingState("LOADED")
+            getEventsByProjectId(projectId).then(({data: eventsData, error}) => {
+            
+                if (error) {
+                    console.error('There was a problem fetching events for this project.');
+                    setProjectLoadingState("ERROR");
+                }
+            
+                if (eventsData) {
+                    setEvents(eventsData);
+                }
+            
+                setProjectLoadingState("LOADED")
+        })
         } 
 
+    }
+
+    const onDeleteConfirm = () => {
+        deleteProject(projectId).then(({status, error}) => {
+            if(error) {
+                console.log(error)
+            }
+
+            console.log('Project deleted successfully', status);
+            navigate('/dashboard');
+        })
     }
 
     /**
      * Fire on mount
      */
     useEffect(() => {
-        getProjectById();
+        getProjectById(projectId).then(({data, error}) => getProjectInfo({data, error}));
     }, [])
 
     return (
+        <>
+        {deleteModalIsOpen && <Modal 
+            isOpen={deleteModalIsOpen}
+            setIsOpen={setDeleteModalIsOpen}
+        >
+            <ModalContent 
+                projectTitle={currentProjectData?.title || ''}
+                setDeleteModalIsOpen={setDeleteModalIsOpen}
+                confirmDelete={onDeleteConfirm}
+            />
+        </Modal>}
         <LayoutWrapper>
             <div className="observe-project">
                 {projectLoadingState == 'LOADING' && <Loading />}
@@ -356,6 +416,7 @@ const Project = () => {
                         projectData={currentProjectData} 
                         updateProjectData={setCurrentProjectData}
                         loadedProjectImageURL={loadedProjectImageURL}
+                        setDeleteModalIsOpen={setDeleteModalIsOpen}
                     />
                     <EventsView 
                         events={events}
@@ -365,6 +426,7 @@ const Project = () => {
                 }
             </div>
         </LayoutWrapper>
+        </>
     )
 
 }
