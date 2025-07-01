@@ -93,14 +93,14 @@ export async function deleteProject(projectId: string | undefined) {
     return await supabase
     .from('projects')
     .delete()
-    .eq('iq', projectId);
+    .eq('id', projectId);
 }
 
 export async function deleteEvent(eventId: string | undefined) {
     return await supabase
     .from('events')
     .delete()
-    .eq('iq', eventId);
+    .eq('id', eventId);
 }
 
 export async function uploadEventMap(mapFile: File) {

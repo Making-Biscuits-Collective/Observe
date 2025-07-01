@@ -44,9 +44,24 @@ section.observe-event-page {
         border-radius: 10px;
         padding: 1em;
     }
+
+    div.page-title-box {
+        display: flex;
+        align-items: center;
+    }
     h1.page-title {
         margin: 0;
     }
+
+    img.project-title-delete {
+        padding-left: 12px;
+        padding-top: 4px;
+        &:hover {
+            filter: invert(75%);
+            cursor: pointer;
+        }
+    }
+
     h2.project-title {
         margin-top: 0;
         font-weight: 900;

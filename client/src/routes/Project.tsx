@@ -1,12 +1,12 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import LayoutWrapper from "../partials/LayoutWrapper";
 import {
-    supabase,
     getImageURLFromBucket,
     updateProject,
     getProjectById,
-    getEventsByProjectId
+    getEventsByProjectId,
+    deleteProject
 } from '../utils/supabase';
 import { 
     ProjectLoadingState, 
@@ -19,6 +19,8 @@ import './Project.scss';
 import Button from '../components/Button';
 import Alert, { AlertType } from '../components/Alert';
 import { Link } from 'react-router-dom';
+import Modal from "../components/Modal";
+
 
 const EventsView = ({
     events,
@@ -76,6 +78,28 @@ const EventsView = ({
     )
 }
 
+const ModalContent = ({
+    projectTitle,
+    confirmDelete,
+    setDeleteModalIsOpen
+} : {
+    projectTitle: string,
+    confirmDelete: () => void,
+    setDeleteModalIsOpen: Dispatch<SetStateAction<boolean>>
+}) => (
+    <div className="delete-modal">
+        <h2 className="modal-title">Are you sure?</h2>
+        <div className="modal-description">
+            Deleting {projectTitle} will also delete all associated events and observations. This action cannot be undone.
+        </div>
+    
+        <div className="flex-centered">
+            <Button label="Delete" variation="primary" onClick={confirmDelete}/>
+            <Button label="Cancel" variation="primary" onClick={() => setDeleteModalIsOpen(false)}/>
+        </div>
+    </div>
+)
+
 const ModeView = ({editMode, setEditMode} : {
     editMode: boolean,
     setEditMode: Dispatch<SetStateAction<boolean>>,
@@ -126,7 +150,8 @@ const EditableProjectContent = ({
     isAlertOpen,
     setIsAlertOpen,
     updateProjectData,
-    imageURL
+    imageURL,
+    setDeleteModalIsOpen
 } : {
     editMode: boolean,
     setEditMode: Dispatch<SetStateAction<boolean>>,
@@ -141,7 +166,8 @@ const EditableProjectContent = ({
     isAlertOpen: boolean,
     setIsAlertOpen: Dispatch<SetStateAction<boolean>>,
     updateProjectData: Dispatch<SetStateAction<ProjectType>>,
-    imageURL: string | undefined
+    imageURL: string | undefined,
+    setDeleteModalIsOpen: Dispatch<SetStateAction<boolean>>
 }) => {
 
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
@@ -203,7 +229,10 @@ const EditableProjectContent = ({
                         />
                     </>
                 : 
-                    <h1 className="project-title">{title}</h1>}
+                    <h1 className="project-title">
+                        <div className="project-title-text">{title}</div>
+                        <img src="/icon/delete.svg" className="project-title-delete" width={26} onClick={() => setDeleteModalIsOpen(true)}/>
+                    </h1>}
                 <h2 className="project-date">
                     <img src="/icon/calendar.svg" width={16}/>
                     {startDate}
@@ -228,11 +257,13 @@ const EditableProjectContent = ({
 const ProjectContent = ({
     projectData,
     updateProjectData,
-    loadedProjectImageURL
+    loadedProjectImageURL,
+    setDeleteModalIsOpen
 }: {
     projectData: ProjectType,
     updateProjectData: Dispatch<SetStateAction<ProjectType>>,
-    loadedProjectImageURL: string | undefined
+    loadedProjectImageURL: string | undefined,
+    setDeleteModalIsOpen: Dispatch<SetStateAction<boolean>>
 }) => {
 
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -257,7 +288,7 @@ const ProjectContent = ({
                     isOpen={isAlertOpen} 
                     setIsOpen={setIsAlertOpen}
                     variation={editedStatus}
-                    message="Your project was saved successfully" //TODO: update for failures
+                    message={`Your project was saved successfully`} //TODO: update for failures
                 />
                 <div className="container-max flex-centered">
                     <ModeView 
@@ -280,6 +311,7 @@ const ProjectContent = ({
                     setIsAlertOpen={setIsAlertOpen}
                     updateProjectData={updateProjectData}
                     imageURL={loadedProjectImageURL}
+                    setDeleteModalIsOpen={setDeleteModalIsOpen}
                 />
             </section>
         </>
@@ -289,6 +321,9 @@ const ProjectContent = ({
 const Project = () => {
 
     const { projectId } = useParams();
+    const navigate = useNavigate();
+
+    const [deleteModalIsOpen, setDeleteModalIsOpen] = useState<boolean>(false);
 
     const [loadedProjectImageURL, setLoadedProjectImageURL] = useState<string | undefined>('');
     const [currentProjectData, setCurrentProjectData] = useState<ProjectType>({
@@ -342,6 +377,17 @@ const Project = () => {
 
     }
 
+    const onDeleteConfirm = () => {
+        deleteProject(projectId).then(({status, error}) => {
+            if(error) {
+                console.log(error)
+            }
+
+            console.log('Project deleted successfully', status);
+            navigate('/dashboard');
+        })
+    }
+
     /**
      * Fire on mount
      */
@@ -350,6 +396,17 @@ const Project = () => {
     }, [])
 
     return (
+        <>
+        {deleteModalIsOpen && <Modal 
+            isOpen={deleteModalIsOpen}
+            setIsOpen={setDeleteModalIsOpen}
+        >
+            <ModalContent 
+                projectTitle={currentProjectData?.title || ''}
+                setDeleteModalIsOpen={setDeleteModalIsOpen}
+                confirmDelete={onDeleteConfirm}
+            />
+        </Modal>}
         <LayoutWrapper>
             <div className="observe-project">
                 {projectLoadingState == 'LOADING' && <Loading />}
@@ -359,6 +416,7 @@ const Project = () => {
                         projectData={currentProjectData} 
                         updateProjectData={setCurrentProjectData}
                         loadedProjectImageURL={loadedProjectImageURL}
+                        setDeleteModalIsOpen={setDeleteModalIsOpen}
                     />
                     <EventsView 
                         events={events}
@@ -368,6 +426,7 @@ const Project = () => {
                 }
             </div>
         </LayoutWrapper>
+        </>
     )
 
 }
