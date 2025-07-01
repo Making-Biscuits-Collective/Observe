@@ -1,9 +1,10 @@
-import { useState, useEffect, Dispatch, SetStateAction, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import LayoutWrapper from '../../partials/LayoutWrapper';
 import './ActivityMapping.scss';
 import { ActivityMapping as ActivityMappingType } from '../../types/types';
 import { supabase, getImageURLFromBucket } from '../../utils/supabase';
+import CanvasInterface from '../../components/CanvasInterface';
 
 export type ObservationData = {
     name: string;
@@ -20,58 +21,7 @@ type FilteredEventInfo = {
     map_path: string;
 }
 
-const Selectors = ({activityType, setActivityType} : {
-    activityType: ActivityMappingType,
-    setActivityType: Dispatch<SetStateAction<ActivityMappingType>>
-}) => (
-    <div className="activity-selector">
-        <div className="select-block">
-            <input 
-                type="radio" 
-                id="activity-sitting" 
-                value="SITTING"
-                checked={activityType == "SITTING"}
-                onChange={(event) => setActivityType(
-                    event.target.value as ActivityMappingType
-                )}
-            />
-            <label htmlFor="activity-sitting" className="centered-selection">
-                <img src="/markers/activity-mapping/sitting.svg" width={32} />
-                <span className="activity-label">Sitting</span>
-            </label>
-        </div>
-        <div className="select-block">
-            <input 
-                type="radio" 
-                id="activity-standing" 
-                value="STANDING"
-                checked={activityType == "STANDING"}
-                onChange={(event) => setActivityType(
-                    event.target.value as ActivityMappingType
-                )}
-            />
-            <label htmlFor="activity-standing" className="centered-selection">
-                <img src="/markers/activity-mapping/standing.svg" width={32} />
-                <span className="activity-label">Standing</span>
-            </label>
-        </div>
-        <div className="select-block">
-            <input 
-                type="radio" 
-                id="activity-other" 
-                value="OTHER"
-                checked={activityType == "OTHER"}
-                onChange={(event) => setActivityType(
-                    event.target.value as ActivityMappingType
-                )}
-            />
-            <label htmlFor="activity-other" className="centered-selection">
-                <img src="/markers/activity-mapping/other.svg" width={32} />
-                <span className="activity-label">Other</span>
-            </label>
-        </div>
-    </div>
-)
+
 
 const ActivityMapping = () => {
 
@@ -126,21 +76,15 @@ const ActivityMapping = () => {
                 <div className="container-max">
                     <h1 className="page-title">New Observation</h1>
                     <h2>Activity Mapping Observation</h2>
+                    <CanvasInterface 
+                        activityType={activityType}
+                        setActivityType={setActivityType}
+                        mapPath={mapPath}
+                    />
                 </div>
                 <div className="activity-grid">
                     <div className="container-max">
-                        <div className="observation-interface">
-                            <Selectors 
-                                activityType={activityType}
-                                setActivityType={setActivityType}
-                            />
-                            <div className="interactive-map">
-                                <img 
-                                    src={mapPath} 
-                                    width="100%"
-                                />
-                            </div>
-                            <div className="observation-details">
+                        <div className="observation-details">
                                 <div className="input-block full-width">
                                     <label htmlFor="observer-name" className="required">
                                         Observer Name
@@ -185,7 +129,6 @@ const ActivityMapping = () => {
                                     />
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </div>
             </section>

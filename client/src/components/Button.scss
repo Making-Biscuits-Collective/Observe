@@ -12,7 +12,7 @@ button {
     &:not([disabled]):hover {
         cursor: pointer;
     }
-    &.primary, &.invert {
+    &.primary, &.invert, &.outline {
         border-radius: 10px;
         font-size: 1.1em;
         font-weight: 700;
@@ -25,6 +25,15 @@ button {
         &:not([disabled]):hover {
             background-color: transparent;
             color: black;
+        }
+    }
+    &.outline {
+        background-color: white;
+        border: 2px black solid;
+        color: black;
+        &:not([disabled]):hover {
+            background-color: black;
+            color: white;
         }
     }
     &.invert {
