@@ -155,21 +155,28 @@ const EditableProjectContent = ({
             title: editedTitle,
             id: projectId
         }).then(({status, error}) => {
-        if (error) {
-            console.log('Error updating project');
-            updateEditStatus("ERR");
-            setIsAlertOpen(true);
-        } else {
-            console.log('Project updated successfully', status);
-            updateEditStatus("CONF");
-            setIsAlertOpen(true);
-            setEditMode(false);
-            updateProjectData(prevData => ({ ...prevData, title: editedTitle }))
-        }
- 
-        console.log('Project updated!')
-    })
+
+            if (error) {
+                console.log('Error updating project');
+                updateEditStatus("ERR");
+                setIsAlertOpen(true);
+            } else {
+                console.log('Project updated successfully', status);
+                updateEditStatus("CONF");
+                setIsAlertOpen(true);
+                setEditMode(false);
+                updateProjectData(prevData => ({ ...prevData, title: editedTitle }))
+            }
+        
+            console.log('Project updated!')
+        })
     }
+
+    useEffect(() => {
+        if(!editMode && editedTitle != title) {
+            setEditedTitle(title);
+        }
+    }, [editMode])
 
     return (
         <div className="container-max project-info">
@@ -241,6 +248,7 @@ const ProjectContent = ({
         description,
         id: projectId
     } = projectData;
+
 
     return (
         <>
