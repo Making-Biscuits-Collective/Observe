@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import LayoutWrapper from '../../partials/LayoutWrapper';
-import './ActivityMapping.scss';
+import './ActivityMappingEdit.scss';
 import CanvasInterface from '../../components/CanvasInterface';
 import { 
     ActivityMapping as ActivityMappingType, 
@@ -11,13 +11,13 @@ import {
     LoadingState,
     MapData
 } from '../../types/types';
-import { getImageURLFromBucket, getEventById, createObservation } from '../../utils/supabase';
+import { getImageURLFromBucket, getEventById, createObservation, getObservationDataById } from '../../utils/supabase';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Breadcrumb from '../../components/Breadcrumb';
 
-const ActivityMapping = () => {
-    const { eventId } = useParams();
+const ActivityMappingEdit = () => {
+    const { eventId, observationId } = useParams();
 
     const [observationData, setObservationData] = useState<ObservationData>({
         observer_name: '',
@@ -30,7 +30,6 @@ const ActivityMapping = () => {
     const [mapData, setMapData] = useState<MapData[]>([]);
     const [mapPath, setMapPath] = useState<string>('');
     const [activityType, setActivityType] = useState<ActivityMappingType>(0);
-    const [isValidObservation, setIsValidObservation] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<LoadingState>("IDLE");
     const [instanceCreated, setInstanceCreated] = useState<boolean>(false);
 
@@ -50,74 +49,66 @@ const ActivityMapping = () => {
         }
     }
 
-    const handleCreate = () => {
-        setIsLoading("LOADING");
-        console.log(observationData);
-        createObservation(observationData).then(({data, error}) => {
-            if (data) {
-                setInstanceCreated(true);
-                setIsLoading("LOADED");
-            } else if (error) {
-                setIsLoading("ERROR");
+    const getObservationData = ({ data, error } : Data<ObservationData[]>) => {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log(data);
+            const observationData: ObservationData | undefined = data?.[0];
+            if (observationData) {
+                setObservationData(observationData);
+                if (observationData?.map_data) {
+                    if (Array.isArray(JSON.parse(observationData.map_data))) {
+                        setMapData(JSON.parse(observationData.map_data))
+                    } else {
+                        console.error('There was a problem loading map data.')
+                    }
+                }
             }
-        })
+        }
     }
 
+
+
     useEffect(() => {
-        setObservationData(
-            (prevState) => ({
-                ...prevState,
-                event: eventId
-            })
-        )
-        getEventById(eventId, 'title, map_path, label_mapping0, label_mapping1, label_mapping2, label_mapping3, label_mapping4').then(({data, error}) => 
+        if (eventId && observationId) {
+            getEventById(eventId, 'title, map_path').then(({data, error}) => 
             getEventInfo({data, error}))
+            getObservationDataById(observationId).then(({data, error}) =>
+            getObservationData({data, error}))
+        }
+        console.log(observationData);
     }, [])
 
-    useEffect(() => {
-        if (observationData?.observer_name && observationData?.date && observationData?.time) {
-            setIsValidObservation(true);
-        } else {
-            setIsValidObservation(false);
-        }
-    }, [observationData])
 
-    useEffect(() => {
-        setObservationData(
-            (prevState) => ({
-                ...prevState,
-                map_data: JSON.stringify(mapData)
-            })
-        )
-    }, [mapData])
 
     return (
         <LayoutWrapper>
             <Alert 
-                message='Your observation was recorded successfully!' 
+                message='Your observation was updated successfully!' 
                 variation='CONF' 
                 isOpen={isLoading == 'LOADED' && instanceCreated} 
                 setIsOpen={setInstanceCreated}
             />
             <Alert 
-                message='There was a problem creating your observation, please try again.' 
+                message='There was a problem updating your observation, please try again.' 
                 variation='ERR' 
                 isOpen={isLoading == 'ERROR' && instanceCreated} 
                 setIsOpen={setInstanceCreated}
                 customCallback={() => setIsLoading('IDLE')}
             />
-            <section className="observe-activity-mapping">
+            <section className="observe-activity-mapping edit">
                 <div className='container-max breadcrumb'>
                     <Breadcrumb 
                         label="Back to Observations"
                         path={`/event/${eventId}/observations`}
                         showIcon
                     />
+                    <h1 className="page-title">Edit Observation</h1>
+                    <h2>Editing Activity Mapping Observation {observationData?.id && <span>ID: {observationData?.id}</span>}</h2>
+                    <h3>{eventInfo?.title}</h3>
                 </div>
                 <div className="container-max">
-                    <h1 className="page-title">New Observation</h1>
-                    <h2>Activity Mapping Observation</h2>
-                    <h3>{eventInfo?.title}</h3>
                     <CanvasInterface 
                         activityType={activityType}
                         setActivityType={setActivityType}
@@ -226,11 +217,11 @@ const ActivityMapping = () => {
                                 </div>
                                 <div className='button-container'>
                                     <Button 
-                                        label={isLoading == 'LOADING' ? 'Saving...' : 'Save'} 
+                                        label={isLoading == 'LOADING' ? 'Updating...' : 'Update'} 
                                         variation='primary' 
                                         size='large' 
-                                        onClick={handleCreate}
-                                        disabled={(isValidObservation || isLoading == 'LOADING') ? false : true}
+                                        // onClick={handleCreate}
+                                        // disabled={(isValidObservation || isLoading == 'LOADING') ? false : true}
                                     />
                                 </div>
                             </div>
@@ -241,4 +232,4 @@ const ActivityMapping = () => {
     )
 }
 
-export default ActivityMapping;
+export default ActivityMappingEdit;

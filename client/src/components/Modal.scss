@@ -1,5 +1,5 @@
 .modal {
-    position: absolute;
+    position: fixed;
     background-color: white;
     width: 600px;
     left: 50%;
@@ -15,7 +15,7 @@
 }
 
 .overlay {
-    position: absolute;
+    position: fixed;
     height: 100%;
     width: 100%;
     left: 0;

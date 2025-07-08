@@ -1,0 +1,19 @@
+.observe-event-observations-page {
+    h1.page-title {
+        margin-bottom: 0;
+    }
+    h2 {
+        margin: 0;
+    }
+    .container-max {
+        display: flex;
+        flex-direction: column;
+        .observations {
+            margin: 4em auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5em;
+        }
+    }
+}

@@ -1,4 +1,47 @@
 .observe-event-creation {
+    .label-definition {
+        display: flex;
+        gap: 1em;
+        box-sizing: border-box;
+        border: 3px black solid;
+        padding: 1em;
+        margin: 2em auto;
+        border-radius: 15px;
+        width: fit-content;
+        input {
+            font-weight: 700;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            border: 0;
+            background: transparent;
+            &:hover {
+                cursor: pointer;
+            }
+            &:focus {
+                background-color: white;
+            }
+        }
+        .label-item {
+            display: flex;
+            gap: 0.5em;
+            align-items: center;
+            position: relative;
+            img.bg-ico {
+                position: absolute;
+                right: 0;
+                margin-right: 0.5em;
+                z-index: -1;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+        }
+    }
     .container-max {
         flex-direction: column;
     }

@@ -17,6 +17,11 @@ body, p {
     max-width: 750px;
 }
 
+.container-small {
+    margin: 4em auto;
+    max-width: 400px;
+}
+
 .flex-centered {
     display: flex;
     justify-content: center;
@@ -129,4 +134,10 @@ label.required {
 
 .full-width {
     width: 100%;
+}
+
+input.large-edit-input {
+    width: 100%;
+    font-size: 2em;
+    font-weight: 900;
 }

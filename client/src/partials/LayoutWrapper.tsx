@@ -6,7 +6,7 @@ import './LayoutWrapper.scss';
 
 const LayoutWrapper = ({children} : {children: ReactNode}) => {
 
-    const { isAuthenticated, user } = useAuth0();
+    const { isAuthenticated, user, logout, loginWithPopup } = useAuth0();
 
     const [accountName, setAccountName] = useState('');
 
@@ -29,6 +29,14 @@ const LayoutWrapper = ({children} : {children: ReactNode}) => {
 
     return (
         <>
+            <div className='mobile-overlay-temp'>
+                <div className='container-small'>
+                    <h2>Heads Up!</h2>
+                    <p>Observe currently only works on screen sizes larger than 1200px. A mobile responsive 
+                        release will be coming shortly.
+                    </p>
+                </div>
+            </div>
             <div className="page-header">
                 <div className="container-max">
                     <Link to="/dashboard" className="logo-link">
@@ -42,24 +50,43 @@ const LayoutWrapper = ({children} : {children: ReactNode}) => {
                         </div>
                     </Link>
                     <nav className="page-menu">
+                        {isAuthenticated &&
                         <ul className="desktop-nav">
-                            <li className="desktop-nav-item">
-                                <Link to="/dashboard">Dashboard</Link>
-                            </li>
                             <li className="desktop-nav-item">
                                 <Link to="/dashboard">Projects</Link>
                             </li>
                             <li className="desktop-nav-item">
                                 <Link to="/help">Help</Link>
                             </li>
-                        </ul>
-                        <div className="user-ctas">
+                        </ul>}
+                        {isAuthenticated && <div className="user-ctas">
                             <AccountDetails />
                             <div className="call-to-actions">
-                                <Button label="Account" variation="cta"/>
-                                <Button label="Logout" variation="cta"/>
+                                {/* <Button 
+                                    label="Account" 
+                                    variation="cta"
+                                /> */}
+                                <Button 
+                                    label="Logout" 
+                                    variation="cta"
+                                    onClick={() => {
+                                        logout({ 
+                                            logoutParams: {
+                                              returnTo: window.location.origin
+                                            }
+                                          })
+                                    }}
+                                />
                             </div>
-                        </div>
+                        </div>}
+                        {!isAuthenticated && 
+                        <div className="login-action">
+                            <Button 
+                                label="Login" 
+                                variation="cta"
+                                onClick={() => loginWithPopup()}
+                            />
+                        </div>}
                     </nav>
                 </div>
             </div>

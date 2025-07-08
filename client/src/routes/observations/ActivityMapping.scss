@@ -1,9 +1,12 @@
 .observe-activity-mapping {
     display: flex;
     flex-direction: column;
-    gap: 4em;
+    // gap: 4em;
     .container-max {
         flex-direction: column;
+        &.breadcrumb {
+            width: 100%;
+        }
     }
     h1 { margin-bottom: 0; }
     h2 { margin: 0; }
@@ -62,17 +65,23 @@
     .form-grid {
         display: flex;
         gap: 1em;
-        justify-content: space-between;
-        align-items: space-between;
+        justify-content: space-around;
         .input-block {
             flex: 1;
             input, select, textarea {
-                width: 90%;
+                width: 100%;
+                padding: 1em;
+                box-sizing: border-box;
             }
             label {
                 margin-top: 1em;
             }
         }
+    }
+    .button-container {
+        display: flex;
+        justify-content: center;
+        margin: 3em 0;
     }
     textarea.observation-notes {
         width: 100%;

@@ -44,12 +44,21 @@ dependencies:
   axios:
     specifier: ^1.9.0
     version: 1.9.0
+  heatmap.js:
+    specifier: ^2.0.5
+    version: 2.0.5
   prop-types:
     specifier: ^15.8.1
     version: 15.8.1
   react:
     specifier: ^19.1.0
     version: 19.1.0
+  react-leaflet:
+    specifier: ^5.0.0
+    version: 5.0.0(leaflet@1.9.4)(react-dom@19.1.0)(react@19.1.0)
+  react-leaflet-heat-layer:
+    specifier: ^1.1.1
+    version: 1.1.1(leaflet@1.9.4)(react-dom@19.1.0)(react-leaflet@5.0.0)(react@19.1.0)
   react-router-dom:
     specifier: ^7.5.3
     version: 7.5.3(react-dom@19.1.0)(react@19.1.0)
@@ -67,6 +76,9 @@ dependencies:
     version: 2.1.4
 
 devDependencies:
+  '@types/heatmap.js':
+    specifier: ^2.0.41
+    version: 2.0.41
   '@types/react-transition-group':
     specifier: ^4.4.12
     version: 4.4.12(@types/react@19.1.2)
@@ -2298,6 +2310,18 @@ packages:
       webpack-dev-server: 4.15.2(webpack@5.99.7)
     dev: false
 
+  /@react-leaflet/core@3.0.0(leaflet@1.9.4)(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-3EWmekh4Nz+pGcr+xjf0KNyYfC3U2JjnkWsh0zcqaexYqmmB5ZhH37kz41JXGmKzpaMZCnPofBBm64i+YrEvGQ==}
+    peerDependencies:
+      leaflet: ^1.9.0
+      react: ^19.0.0
+      react-dom: ^19.0.0
+    dependencies:
+      leaflet: 1.9.4
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    dev: false
+
   /@rollup/plugin-babel@5.3.1(@babel/core@7.27.1)(rollup@2.79.2):
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
     engines: {node: '>= 10.0.0'}
@@ -2738,11 +2762,21 @@ packages:
       '@types/serve-static': 1.15.7
     dev: false
 
+  /@types/geojson@7946.0.16:
+    resolution: {integrity: sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==}
+    dev: true
+
   /@types/graceful-fs@4.1.9:
     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}
     dependencies:
       '@types/node': 16.18.126
     dev: false
+
+  /@types/heatmap.js@2.0.41:
+    resolution: {integrity: sha512-3oHffxC+N+1EKXjeC65klk1kHnLJ5i6tEKFNb/04J+qSfQuCliacsNBWDpt59JfG2vBXRRn+ICbzRZj48j6HfQ==}
+    dependencies:
+      '@types/leaflet': 0.7.40
+    dev: true
 
   /@types/html-minifier-terser@6.1.0:
     resolution: {integrity: sha512-oh/6byDPnL1zeNXFrDXFLyZjkr1MsBG667IM792caf1L2UPOOMf65NFzjUH/ltyfwjAGfs1rsX1eftK0jC/KIg==}
@@ -2788,6 +2822,12 @@ packages:
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: false
+
+  /@types/leaflet@0.7.40:
+    resolution: {integrity: sha512-R2UwXOKwnKZi9zNm37WbPTAVuqHmysE6NVihkc5DUrovTirUxFSbZzvXrlwv0n5sibe0w8VF1bWu0ta4kZlAaA==}
+    dependencies:
+      '@types/geojson': 7946.0.16
+    dev: true
 
   /@types/mime@1.3.5:
     resolution: {integrity: sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==}
@@ -5995,6 +6035,10 @@ packages:
     hasBin: true
     dev: false
 
+  /heatmap.js@2.0.5:
+    resolution: {integrity: sha512-CG2gYFP5Cv9IQCXEg3ZRxnJDyAilhWnQlAuHYGuWVzv6mFtQelS1bR9iN80IyDmFECbFPbg6I0LR5uAFHgCthw==}
+    dev: false
+
   /hoopy@0.1.4:
     resolution: {integrity: sha512-HRcs+2mr52W0K+x8RzcLzuPPmVIKMSv97RGHy0Ea9y/mpcaK+xTrjICA04KAHi4GRzxliNqNJEFYWHghy3rSfQ==}
     engines: {node: '>= 6.0.0'}
@@ -7334,6 +7378,10 @@ packages:
     dependencies:
       picocolors: 1.1.1
       shell-quote: 1.8.2
+    dev: false
+
+  /leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
     dev: false
 
   /leven@3.1.0:
@@ -9074,6 +9122,34 @@ packages:
 
   /react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+    dev: false
+
+  /react-leaflet-heat-layer@1.1.1(leaflet@1.9.4)(react-dom@19.1.0)(react-leaflet@5.0.0)(react@19.1.0):
+    resolution: {integrity: sha512-m+mBSx3C/O9SA6kbGyCcu1Y8owkHIOsBYTnVIxderJRQAsQZCbzAtoh0WYLKTPj2iggm4JkSZhZXtepzTyrH3g==}
+    peerDependencies:
+      leaflet: '>=1.8.0'
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+      react-leaflet: '>=4.0.0'
+    dependencies:
+      leaflet: 1.9.4
+      leaflet.heat: github.com/Leaflet/Leaflet.heat/8474cac2ecc25744d7addc6f03aa32945f9c72fc
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-leaflet: 5.0.0(leaflet@1.9.4)(react-dom@19.1.0)(react@19.1.0)
+    dev: false
+
+  /react-leaflet@5.0.0(leaflet@1.9.4)(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-CWbTpr5vcHw5bt9i4zSlPEVQdTVcML390TjeDG0cK59z1ylexpqC6M1PJFjV8jD7CF+ACBFsLIDs6DRMoLEofw==}
+    peerDependencies:
+      leaflet: ^1.9.0
+      react: ^19.0.0
+      react-dom: ^19.0.0
+    dependencies:
+      '@react-leaflet/core': 3.0.0(leaflet@1.9.4)(react-dom@19.1.0)(react@19.1.0)
+      leaflet: 1.9.4
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
     dev: false
 
   /react-refresh@0.11.0:
@@ -11255,4 +11331,10 @@ packages:
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+    dev: false
+
+  github.com/Leaflet/Leaflet.heat/8474cac2ecc25744d7addc6f03aa32945f9c72fc:
+    resolution: {tarball: https://codeload.github.com/Leaflet/Leaflet.heat/tar.gz/8474cac2ecc25744d7addc6f03aa32945f9c72fc}
+    name: leaflet.heat
+    version: 0.2.0
     dev: false

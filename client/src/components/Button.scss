@@ -9,6 +9,9 @@ button {
     &.small {
         font-size: 0.8em !important;
     }
+    &.large {
+        font-size: 1.5em !important;
+    }
     &:not([disabled]):hover {
         cursor: pointer;
     }

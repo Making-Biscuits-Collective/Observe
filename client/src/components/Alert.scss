@@ -1,5 +1,5 @@
 .alert {
-    position: absolute;
+    position: fixed;
     bottom: 1em;
     padding: 1em;
     transition: opacity 300ms ease-in-out;
@@ -9,6 +9,7 @@
     border-radius: 15px;
     transform: translateX(-50%);
     font-weight: 700;
+    z-index: 10;
     &.CONF {
         background-color: rgb(16, 54, 33);
     }

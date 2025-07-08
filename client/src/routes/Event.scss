@@ -18,6 +18,10 @@ section.observe-event-page {
     }
     input.event-code {
         width: fit-content;
+        font-size: 1.3em;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-family: sans-serif;
 
     }
     .map-container {
@@ -32,6 +36,11 @@ section.observe-event-page {
     .image-container {
         display: flex;
         justify-content: center;
+        width: 900px;
+        height: 500px;
+        img {
+            object-fit: contain;
+        }
     }
     .grid {
         margin-top: 2em;

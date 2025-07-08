@@ -6,7 +6,7 @@
 
 import './CanvasInterface.scss';
 import { Dispatch, SetStateAction, useState, useEffect, MouseEvent, MouseEventHandler } from 'react';
-import { ActivityMapping as ActivityMappingType } from '../types/types';
+import { ActivityMapping as ActivityMappingType, Coordinates, FilteredEventInfo, MapData } from '../types/types';
 import Button from './Button';
 
 const MARKER_SIZE = 32;
@@ -22,101 +22,125 @@ const Marker = ({activityType, coordinates} : {
             top: `${coordinates?.y}px`,
         }}
     >
-        {activityType == 'SITTING' && <img src="/markers/activity-mapping/sitting.svg" width={MARKER_SIZE} />}
-        {activityType == 'STANDING' && <img src="/markers/activity-mapping/standing.svg" width={MARKER_SIZE} />}
-        {activityType == 'OTHER' && <img src="/markers/activity-mapping/other.svg" width={MARKER_SIZE} />}
+        {activityType == 0 && <img src="/markers/activity-mapping/0.svg" width={MARKER_SIZE} />}
+        {activityType == 1 && <img src="/markers/activity-mapping/1.svg" width={MARKER_SIZE} />}
+        {activityType == 2 && <img src="/markers/activity-mapping/2.svg" width={MARKER_SIZE} />}
+        {activityType == 3 && <img src="/markers/activity-mapping/3.svg" width={MARKER_SIZE} />}
+        {activityType == 4 && <img src="/markers/activity-mapping/4.svg" width={MARKER_SIZE} />}
     </div>
 )
 
-const Selectors = ({activityType, setActivityType, updateCanvasData} : {
+const Selectors = ({activityType, setActivityType, filteredInfo} : {
     activityType: ActivityMappingType,
     setActivityType: Dispatch<SetStateAction<ActivityMappingType>>,
-    updateCanvasData: () => void
+    filteredInfo: FilteredEventInfo | null
+    // updateCanvasData: () => void
 }) => (
     <div className="activity-selector">
         <div className="select-block">
             <input 
                 type="radio" 
-                id="activity-sitting" 
-                value="SITTING"
-                checked={activityType == "SITTING"}
+                id="activity-0" 
+                value={0}
+                checked={activityType == 0}
                 onChange={(event) => {
-                        updateCanvasData();
+                        // updateCanvasData();
                         setActivityType(
-                            event.target.value as ActivityMappingType
+                            Number(event.target.value) as ActivityMappingType
                         );
                 }}
             />
-            <label htmlFor="activity-sitting" className="centered-selection">
-                <img src="/markers/activity-mapping/sitting.svg" width={32} />
-                <span className="activity-label">Sitting</span>
+            <label htmlFor="activity-0" className="centered-selection">
+                <img src="/markers/activity-mapping/0.svg" width={32} />
+                <span className="activity-label">{filteredInfo?.label_mapping0 ?? 'Sitting'}</span>
             </label>
         </div>
         <div className="select-block">
             <input 
                 type="radio" 
-                id="activity-standing" 
-                value="STANDING"
-                checked={activityType == "STANDING"}
+                id="activity-1" 
+                value={1}
+                checked={activityType == 1}
                 onChange={(event) => {
-                    updateCanvasData();
                     setActivityType(
-                        event.target.value as ActivityMappingType
+                        Number(event.target.value) as ActivityMappingType
                     )}
                 }
             />
-            <label htmlFor="activity-standing" className="centered-selection">
-                <img src="/markers/activity-mapping/standing.svg" width={32} />
-                <span className="activity-label">Standing</span>
+            <label htmlFor="activity-1" className="centered-selection">
+                <img src="/markers/activity-mapping/1.svg" width={32} />
+                <span className="activity-label">{filteredInfo?.label_mapping1 ?? 'Standing'}</span>
             </label>
         </div>
         <div className="select-block">
             <input 
                 type="radio" 
-                id="activity-other" 
-                value="OTHER"
-                checked={activityType == "OTHER"}
+                id="activity-2" 
+                value={2}
+                checked={activityType == 2}
                 onChange={(event) => {
-                    updateCanvasData();
                     setActivityType(
-                        event.target.value as ActivityMappingType
+                        Number(event.target.value) as ActivityMappingType
                     )
                 }}
             />
-            <label htmlFor="activity-other" className="centered-selection">
-                <img src="/markers/activity-mapping/other.svg" width={32} />
-                <span className="activity-label">Other</span>
+            <label htmlFor="activity-2" className="centered-selection">
+                <img src="/markers/activity-mapping/2.svg" width={32} />
+                <span className="activity-label">{filteredInfo?.label_mapping2 ?? 'Lying'}</span>
+            </label>
+        </div>
+        <div className="select-block">
+            <input 
+                type="radio" 
+                id="activity-3" 
+                value={3}
+                checked={activityType == 3}
+                onChange={(event) => {
+                    // updateCanvasData();
+                    setActivityType(
+                        Number(event.target.value) as ActivityMappingType
+                    )
+                }}
+            />
+            <label htmlFor="activity-3" className="centered-selection">
+                <img src="/markers/activity-mapping/3.svg" width={32} />
+                <span className="activity-label">{filteredInfo?.label_mapping3 ?? 'Lying'}</span>
+            </label>
+        </div>
+        <div className="select-block">
+            <input 
+                type="radio" 
+                id="activity-4" 
+                value={4}
+                checked={activityType == 4}
+                onChange={(event) => {
+                    setActivityType(
+                        Number(event.target.value) as ActivityMappingType
+                    )
+                }}
+            />
+            <label htmlFor="activity-4" className="centered-selection">
+                <img src="/markers/activity-mapping/4.svg" width={32} />
+                <span className="activity-label">{filteredInfo?.label_mapping4 ?? 'Lying'}</span>
             </label>
         </div>
     </div>
 );
 
-type Coordinates = {
-    x: number;
-    y: number;
-}
-
-type MapData = {
-    coordinates: Coordinates;
-    type: ActivityMappingType;
-}
-
-const InteractiveMap = ({mapPath, activityType, setActivityType} : {
+const InteractiveMap = ({mapPath, activityType, setActivityType, mapData, setMapData, filteredInfo} : {
     mapPath: string,
     activityType: ActivityMappingType,
-    setActivityType: Dispatch<SetStateAction<ActivityMappingType>>
+    setActivityType: Dispatch<SetStateAction<ActivityMappingType>>,
+    mapData: MapData[],
+    setMapData: Dispatch<SetStateAction<MapData[]>>,
+    filteredInfo: FilteredEventInfo | null
 }) => {
 
     const [isPlotting, setIsPlotting] = useState<boolean>(false);
     const [currentXY, setCurrentXY] = useState<Coordinates | null>(null);
     const [currentActivityType, setCurrentActivityType] = useState<ActivityMappingType | null>(null);
-    const [mapData, setMapData] = useState<MapData[]>([]);
     
     useEffect(() => {
-
-    }, [isPlotting])
-
-    const updateCanvasData = () => {
         if (currentXY && currentActivityType) {
             setMapData(
                 [
@@ -129,11 +153,10 @@ const InteractiveMap = ({mapPath, activityType, setActivityType} : {
             );
             setCurrentXY(null);
         }
-    }
+    }, [currentXY])
 
     const handleEnterPlot = (event: MouseEvent<HTMLDivElement>) => {
         setIsPlotting(true);
-        updateCanvasData();
         let bounds = event.currentTarget.getBoundingClientRect();
         var x = event.clientX - bounds.left - (MARKER_SIZE/2);
         var y = event.clientY - bounds.top - (MARKER_SIZE/2);
@@ -141,8 +164,12 @@ const InteractiveMap = ({mapPath, activityType, setActivityType} : {
         setCurrentActivityType(activityType);
     }
 
-    const handleResetXY = () => {
-        setCurrentXY(null);
+    const handleUndo = () => {
+        if (mapData.length > 0) {
+            setMapData([
+                ...mapData.slice(0, -1)
+            ]);
+        }
     }
 
     return (
@@ -151,12 +178,10 @@ const InteractiveMap = ({mapPath, activityType, setActivityType} : {
         <Selectors 
             activityType={activityType}
             setActivityType={setActivityType}
-            updateCanvasData={updateCanvasData}
+            filteredInfo={filteredInfo}
         />
         <div className='controls'>
-            <Button label='Save' variation='primary' onClick={() => {
-            }}/>
-            <Button label='Undo' variation='outline' onClick={handleResetXY}/>
+            <Button label='Undo' variation='outline' onClick={handleUndo}/>
             <Button label='Clear' variation='outline' onClick={() => {
                 setMapData([]);
                 setCurrentXY(null);
@@ -187,10 +212,13 @@ const InteractiveMap = ({mapPath, activityType, setActivityType} : {
     )
 }
 
-const CanvasInterface = ({activityType, setActivityType, mapPath} : {
+const CanvasInterface = ({activityType, setActivityType, mapPath, mapData, setMapData, filteredInfo} : {
     activityType: ActivityMappingType,
     setActivityType: Dispatch<SetStateAction<ActivityMappingType>>,
     mapPath: string,
+    mapData: MapData[],
+    setMapData: Dispatch<SetStateAction<MapData[]>>,
+    filteredInfo: FilteredEventInfo | null
 }) => {
     return (
         <div className="observation-interface">
@@ -198,6 +226,9 @@ const CanvasInterface = ({activityType, setActivityType, mapPath} : {
                 mapPath={mapPath} 
                 activityType={activityType}
                 setActivityType={setActivityType}
+                mapData={mapData}
+                setMapData={setMapData}
+                filteredInfo={filteredInfo}
             />
         </div>
     )

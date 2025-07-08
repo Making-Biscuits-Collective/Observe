@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import LayoutWrapper from '../partials/LayoutWrapper';
 import Breadcrumb from '../components/Breadcrumb';
 import './NewEvent.scss';
-import { Project as ProjectType, Data } from '../types/types';
+import { Project as ProjectType, Data, EventCode } from '../types/types';
 import {getProjectById, uploadEventMap, createNewEvent } from '../utils/supabase';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
@@ -15,6 +15,7 @@ type CreateProject = 'IDLE' | 'ERROR' | 'CONF';
 const NewEventConfirmation = ({
     projectId,
     eventId,
+    eventCode,
     eventName,
     isOpen,
     setIsOpen,
@@ -22,6 +23,7 @@ const NewEventConfirmation = ({
 } : {
     projectId: string;
     eventId: string;
+    eventCode: string;
     eventName: string;
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -41,7 +43,7 @@ const NewEventConfirmation = ({
                 <p>Your event <strong>{eventName}</strong> has been created! Use the following event code 
                 or share the event URL to let other folks add observations.</p>
                 <div className="navigate-event">
-                    <div className="unique-event-code">{eventId}</div>
+                    <div className="unique-event-code">{eventCode}</div>
                     <input 
                         type="text" 
                         value={eventUrlString}
@@ -65,6 +67,80 @@ const NewEventConfirmation = ({
     )
 }
 
+const DefineLabels = ({eventInfo, setEventInfo} : {
+    eventInfo: Event;
+    setEventInfo: Dispatch<SetStateAction<Event>>;
+}) => {
+    return (
+        <div className='label-definition'>
+            <div className="col">
+                <div className='label-item'>
+                    <img src='/markers/activity-mapping/0.svg' width={24}/>
+                    <input 
+                        type='text' 
+                        value={eventInfo.label_mapping0} 
+                        onChange={(event) => setEventInfo((prevState) => ({
+                            ...prevState,
+                            label_mapping0: event.target.value
+                        }))}
+                    />
+                    <img src='/icon/pencil.svg' width={18} height={18} className='bg-ico'/>
+                </div>
+                <div className='label-item'>
+                    <img src='/markers/activity-mapping/1.svg' width={24}/>
+                    <input 
+                        type='text' 
+                        value={eventInfo.label_mapping1} 
+                        onChange={(event) => setEventInfo((prevState) => ({
+                            ...prevState,
+                            label_mapping1: event.target.value
+                        }))}
+                    />
+                    <img src='/icon/pencil.svg' width={18} height={18} className='bg-ico'/>
+                </div>
+                <div className='label-item'>
+                    <img src='/markers/activity-mapping/2.svg' width={24}/>
+                    <input 
+                        type='text' 
+                        value={eventInfo.label_mapping2} 
+                        onChange={(event) => setEventInfo((prevState) => ({
+                            ...prevState,
+                            label_mapping2: event.target.value
+                        }))}
+                    />
+                    <img src='/icon/pencil.svg' width={18} height={18} className='bg-ico'/>
+                </div>
+            </div>
+            <div className="col">
+                <div className='label-item'>
+                    <img src='/markers/activity-mapping/3.svg' width={24}/>
+                    <input 
+                        type='text' 
+                        value={eventInfo.label_mapping3} 
+                        onChange={(event) => setEventInfo((prevState) => ({
+                            ...prevState,
+                            label_mapping3: event.target.value
+                        }))}
+                    />
+                    <img src='/icon/pencil.svg' width={18} height={18} className='bg-ico'/>
+                </div>
+                <div className='label-item'>
+                    <img src='/markers/activity-mapping/4.svg' width={24}/>
+                    <input 
+                        type='text' 
+                        value={eventInfo.label_mapping4} 
+                        onChange={(event) => setEventInfo((prevState) => ({
+                            ...prevState,
+                            label_mapping4: event.target.value
+                        }))}
+                    />
+                    <img src='/icon/pencil.svg' width={18} height={18} className='bg-ico'/>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 const NewEvent = () => {
 
     const { projectId } = useParams();
@@ -78,6 +154,11 @@ const NewEvent = () => {
         location: '',
         map_path: '',
         notes: '',
+        label_mapping0: 'Sitting',
+        label_mapping1: 'Standing',
+        label_mapping2: 'Laying Down',
+        label_mapping3: 'Idling',
+        label_mapping4: 'Other',
     });
 
     const [createStatus, setCreateStatus] = useState<CreateProject>('IDLE');
@@ -86,6 +167,7 @@ const NewEvent = () => {
     const [eventCreated, setEventCreated] = useState<boolean>(false);
     const [newEventId, setNewEventId] = useState<string>('');
     const [disableSubmission, setDisableSubmission] = useState<boolean>(true);
+    const [eventCode, setEventCode] = useState<string>('');
 
     function resetValues() {
         setProjectName('');
@@ -184,12 +266,13 @@ const NewEvent = () => {
                         console.error('There was a problem creating this event.', dataError);
                         setCreateStatus('ERROR');
                     } else {
-                        const newEvent: Event | null = event?.[0];
-                        if (newEvent?.id) {
-                            setNewEventId(newEvent.id);
+                        const newEvent: EventCode | null = event?.[0];
+                        if (newEvent) {
+                            setNewEventId(newEvent.eventId);
+                            setEventCode(newEvent.eventCode);
+                            setEventCreated(true);
+                            setCreateStatus('CONF');
                         }
-                        setEventCreated(true);
-                        setCreateStatus('CONF');
                     }
                 })
             })
@@ -215,6 +298,7 @@ const NewEvent = () => {
 
                             <p>Once you finish creating your event, you'll be able to add observations.</p>
                             </div>
+                            <DefineLabels eventInfo={eventInfo} setEventInfo={setEventInfo}/>
                             <div className="input-box">
                                 <label htmlFor="event-title" className="required">Event Title</label>
                                 <input 
@@ -288,6 +372,7 @@ const NewEvent = () => {
                             <NewEventConfirmation 
                                 projectId={projectId || ''}
                                 eventId={newEventId}
+                                eventCode={eventCode}
                                 eventName={eventInfo.title}
                                 isOpen={eventCreated}
                                 setIsOpen={setEventCreated}

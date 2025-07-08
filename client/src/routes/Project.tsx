@@ -20,6 +20,7 @@ import Button from '../components/Button';
 import Alert, { AlertType } from '../components/Alert';
 import { Link } from 'react-router-dom';
 import Modal from "../components/Modal";
+import Breadcrumb from '../components/Breadcrumb';
 
 
 const EventsView = ({
@@ -49,7 +50,7 @@ const EventsView = ({
                         <img src="/icon/calendar.svg" width={16}/>
                     </span>
                     {eventData?.location}</div>
-                <div className="event-card-detail observations-total">0 observations</div>
+                {/* <div className="event-card-detail observations-total">0 observations</div> */}
             </>
             }
         </div>
@@ -409,6 +410,13 @@ const Project = () => {
         </Modal>}
         <LayoutWrapper>
             <div className="observe-project">
+                <div className='container-max'>
+                    <Breadcrumb 
+                        label="Back to Projects"
+                        path={`/dashboard`}
+                        showIcon
+                    />
+                </div>
                 {projectLoadingState == 'LOADING' && <Loading />}
                 {projectLoadingState == 'LOADED' && 
                 <>

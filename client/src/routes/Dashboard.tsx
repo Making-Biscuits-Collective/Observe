@@ -4,9 +4,11 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Project, Data } from "../types/types";
 import ProjectCard from "../components/ProjectCard";
 import Alert, {AlertType} from "../components/Alert";
+import { withAuthenticationRequired } from '@auth0/auth0-react';
 import './Dashboard.scss';
 import Button from "../components/Button";
 import Modal from "../components/Modal";
+import Loading from "../components/Loading";
 
 type NewProject = {
     title: string;
@@ -101,7 +103,6 @@ const ModalContent = ({
 const Dashboard = () => {
 
     const [newProjectModalIsOpen, setNewProjectModalIsOpen] = useState<boolean>(false);
-    console.log("New Modal Open: " + newProjectModalIsOpen);
     const [newProject, setNewProject] = useState<NewProject>({
         title: '',
         description: '',
@@ -109,6 +110,7 @@ const Dashboard = () => {
     });
     const [newProjectStatus, setNewProjectStatus] = useState<NewProjectStatus>("IDLE");
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
    const getAlertType = (): AlertType => {
         if (newProjectStatus == "ERR") return "ERR";
@@ -116,9 +118,9 @@ const Dashboard = () => {
     }
 
     const getProjectList = ({ data, error } : Data<Project[]>) => {
-        console.log('Fetching projects...')
         if (data) {
             setProjectList(data);
+            setIsLoading(false);
         } else {
             console.log(error);
         }
@@ -169,6 +171,7 @@ const Dashboard = () => {
             />
         </Modal>}
         <LayoutWrapper>
+
             <div className="observe-dashboard">
                 <section className="title">
                     <div className="container-max flex-centered">
@@ -184,6 +187,7 @@ const Dashboard = () => {
                         />
                     </div>
                     <div className="projects-grid container-max">
+                        {isLoading && <Loading />}
                         {projectList.map((projectData) => 
                             <div className="project-grid-card" key={`grid-item-${projectData.title}`}>
                                 <ProjectCard 
@@ -199,4 +203,6 @@ const Dashboard = () => {
     )
 }
 
-export default Dashboard;
+export default withAuthenticationRequired(Dashboard, {
+    onRedirecting: () => (<div>Redirecting...</div>)
+});

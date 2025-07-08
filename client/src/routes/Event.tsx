@@ -2,10 +2,13 @@ import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import LayoutWrapper from '../partials/LayoutWrapper';
 import { Event as EventType, Data } from '../types/types';
-import { getEventById, getProjectById, getImageURLFromBucket, deleteEvent} from '../utils/supabase';
+import { getEventById, getProjectById, getImageURLFromBucket, deleteEvent, getEventCode} from '../utils/supabase';
 import './Event.scss';
 import Button from '../components/Button';
 import Modal from "../components/Modal";
+import Breadcrumb from '../components/Breadcrumb';
+import { useAuth0 } from '@auth0/auth0-react';
+import Loading from '../components/Loading';
 
 const ModalContent = ({
     eventTitle,
@@ -34,9 +37,11 @@ const Event = () => {
     const navigate = useNavigate();
 
     const { eventId } = useParams();
+    const { isAuthenticated } = useAuth0();
 
     const [deleteModalIsOpen, setDeleteModalIsOpen] = useState<boolean>(false);
 
+    const [eventCode, setEventCode] = useState<string>('');
     const [eventData, setEventData] = useState<EventType>({
         title: '',
         date: '',
@@ -46,10 +51,9 @@ const Event = () => {
     const [projectName, setProjectName] = useState('');
     const [projectDesc, setProjectDesc] = useState('');
     const [loadedMapURL, setLoadedMapURL] = useState('');
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const getEventInfo = ({data, error}: Data<EventType[]>) => {
-
-
         if (error) {
             console.error('Oops, we had trouble fetching the event data!', error);
         } else {
@@ -100,9 +104,20 @@ const Event = () => {
         }
 
     useEffect(() => {
-        getEventById(eventId).then(({ data, error }) => {
-            getEventInfo({ data: data as EventType[] | null, error });
-          });
+        if (eventId) {
+            getEventById(eventId).then(({ data, error }) => {
+                getEventInfo({ data: data as EventType[] | null, error });
+                setIsLoading(false);
+              });
+            getEventCode(eventId).then(({ data, error }) => {
+                if (data) {
+                    setEventCode(data[0]?.eventCode);
+                } else if (error) {
+                    console.error(error);
+                    setEventCode(eventId);
+                }
+            });
+        }
     }, [])
 
     return (
@@ -119,7 +134,17 @@ const Event = () => {
         </Modal>}
         
             <LayoutWrapper>
+                {isLoading ? <Loading /> :
                 <section className="observe-event-page">
+                    {isAuthenticated &&
+                        <div className='container-max'>
+                        <Breadcrumb 
+                                label="Back to Project"
+                                path={`/project/${eventData.project}`}
+                                showIcon
+                            />
+                        </div>
+                    }
                     <div className="container-max">
                         <div className="title">
                             <div className="page-title-box">
@@ -130,7 +155,7 @@ const Event = () => {
                         </div>
                         <div className="event-code-container">
                             <label htmlFor="event-code">Event Code</label>
-                            <input type="text" value={eventData.id} className="event-code" disabled/>
+                            <input type="text" value={eventCode} className="event-code" disabled/>
                         </div>
                     </div>
                     <div className="map-container container-max">
@@ -138,12 +163,12 @@ const Event = () => {
                             <Button 
                                 label='Manage Observations' 
                                 variation='primary'
-                                onClick={() => navigate(`/event/${eventId}/activityMapping`)}
+                                onClick={() => navigate(`/event/${eventId}/observations`)}
                             />
                             <Button 
                                 label='Manage Heatmaps' 
                                 variation='primary'
-                                onClick={() => {}}
+                                onClick={() => navigate(`/event/${eventId}/heatmaps`)}
                             />
                         </div>
                         <div className='image-container'>
@@ -164,7 +189,7 @@ const Event = () => {
                             {projectDesc}
                         </div>
                     </div>
-                </section>
+                </section>}
             </LayoutWrapper>
         </>
     )

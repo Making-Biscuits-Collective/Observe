@@ -1,0 +1,44 @@
+.component.filter-observations {
+    width: 100%;
+    margin: 4em auto;
+    border: 1px black solid;
+    border-radius: 25px;
+    box-sizing: border-box;
+    padding: 1em;
+    max-height: 700px;
+    overflow: scroll;
+    ul.filter-observations-list {
+        list-style-type: none;
+        padding: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        li {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5em;
+            border-radius: 15px;
+            padding: 0.5em;
+            &.checked {
+                background-color: var(--green-color);
+            }
+        }
+        input[type=checkbox].observation-check {
+            margin-right: 0.5em;
+            vertical-align: middle;
+            font-size: 3em;
+        }
+    }
+    .filter-observations-headers {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1em;
+        padding: 1em;
+        span.header {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    }
+}
