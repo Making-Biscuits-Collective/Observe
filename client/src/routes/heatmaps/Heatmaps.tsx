@@ -62,7 +62,7 @@ const Heatmaps = () => {
                                 <div className="page-title-box">
                                     <h1 className="page-title">{eventName}</h1>
                                 </div>
-                                <h2 className="sub-title">Recorded Observations ({heatmaps.length})</h2>
+                                <h2 className="sub-title">Heatmaps ({heatmaps.length})</h2>
                                 <p>
                                     <Button 
                                         label='Add New Heatmap' 

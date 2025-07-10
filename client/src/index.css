@@ -14,4 +14,11 @@ code {
 
 :root {
   --green-color: #8DBE40;
+  --blue-color: #29ABD7;
+  --yellow-color: #f8b319;
+  --red-color: #dd3e3e;
+  --purple-color: #ac529f;
+  --idle-color: #d1d3d446;
+  --button-color: #221F20;
+  --hover-color: #58595B;
 }

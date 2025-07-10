@@ -172,12 +172,6 @@ const CreateHeatmap = () => {
                             }))}
                         />
                     </div>
-                    <div className="heatmap-details">
-                        {/* <HeatmapCard heatmapData={{
-                            title: heatmapDetails?.title,
-                            map_data: heatmapDetails?.map_data,
-                        }}/> */}
-                    </div>
                 </div>
                 <div className='container-max observations-container'>
                     <div 

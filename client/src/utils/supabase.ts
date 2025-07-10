@@ -177,11 +177,22 @@ export async function createNewHeatmap(heatmapData: HeatmapData, instances: Join
         const heatmapId = data[0]?.id;
         return await supabase
         .from('HeatmapInstances')
-        .insert(instances)
+        .insert(instances.map(obs => ({
+            ...obs,
+            heatmapId
+        })))
         .select()
     } else {
         return { data: null, error };
     }
+}
+
+export async function updateHeatmap(heatmapData: HeatmapData, instances: JoinHeatmapInstance[]) {
+    return await supabase
+    .from('heatmaps')
+    .update([{title: heatmapData.title }]) 
+    .eq('id', heatmapData.id)
+    .select();
 }
 
 export async function getHeatmapsByEventId(eventId: string) {
@@ -190,3 +201,18 @@ export async function getHeatmapsByEventId(eventId: string) {
     .select('*')
     .eq('eventId', eventId) as Data<HeatmapData[]>;
 }
+
+export async function getHeatmapDataById(heatmapId: string) {
+    return await supabase
+    .from('heatmaps')
+    .select('*')
+    .eq('id', heatmapId) as Data<HeatmapData[]>;
+}
+
+export async function getHeatmapObservationIds(heatmapId: string) {
+    return await supabase 
+    .from('HeatmapInstances')
+    .select('instanceId')
+    .eq('heatmapId', heatmapId) as Data<JoinHeatmapInstance[]>;
+}
+

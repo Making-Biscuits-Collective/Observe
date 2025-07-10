@@ -5,8 +5,12 @@ section.observe-heatmaps-management-page {
     h2 {
         margin: 0;
     }
-    .container-max {
+    .container-max, .heatmaps {
         display: flex;
         flex-direction: column;
+    }
+    .heatmaps {
+        gap: 1.5em;
+        margin: 2em 0;
     }
 }

@@ -2,6 +2,8 @@ button {
     font-family: 'Raleway Variable', sans-serif;
     transition: all 0.3s ease-in-out;
     width: fit-content;
+    text-transform: uppercase;
+    box-sizing: border-box;
     &:disabled,
     &[disabled] {
         opacity: 0.5;
@@ -16,18 +18,18 @@ button {
         cursor: pointer;
     }
     &.primary, &.invert, &.outline {
-        border-radius: 10px;
         font-size: 1.1em;
         font-weight: 700;
         padding: 0.3em 1em;
     }
     &.primary {
-        background-color: black;
-        border: 2px black solid;
+        background-color: var(--button-color);
         color: white;
+        border: 0;
+        padding: 1em;
+        border-radius: 2em;
         &:not([disabled]):hover {
-            background-color: transparent;
-            color: black;
+            background-color: var(--hover-color);
         }
     }
     &.outline {
@@ -52,14 +54,13 @@ button {
         font-weight: 700;
         text-transform: uppercase;
         font-size: 0.8em;
-        background-color: black;
+        background-color: var(--button-color);
         color: white;
-        border: 2px black solid;
+        border: 0;
         padding: 0.5em 1em;
-        border-radius: 10px;
+        border-radius: 1.5em;
         &:hover {
-            background-color: transparent;
-            color: black;
+            background-color: var(--hover-color);
         }
     }
     &.text {

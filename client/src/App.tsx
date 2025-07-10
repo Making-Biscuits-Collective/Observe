@@ -11,12 +11,15 @@ import Observations from './routes/observations/Observations';
 import ActivityMappingEdit from './routes/observations/ActivityMappingEdit';
 import Heatmaps from './routes/heatmaps/Heatmaps';
 import CreateHeatmap from './routes/heatmaps/CreateHeatmap';
+import EditHeatmap from './routes/heatmaps/EditHeatmap';
+import Help from './routes/Help';
 
 function App() {
   return (
     <div>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/help" element={<Help />} />
         <Route path="/project/:projectId" element={<Project />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/project/:projectId/newEvent" element={<NewEvent />} />
@@ -26,6 +29,7 @@ function App() {
         <Route path="/event/:eventId" element={<Event />} />
         <Route path="/event/:eventId/heatmaps" element={<Heatmaps />} />
         <Route path="/event/:eventId/newHeatmap" element={<CreateHeatmap />} />
+        <Route path="/event/:eventId/heatmaps/edit/:heatmapId" element={<EditHeatmap />} />
       </Routes>
 
     </div>

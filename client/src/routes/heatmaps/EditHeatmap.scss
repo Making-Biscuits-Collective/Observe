@@ -1,0 +1,50 @@
+section.observe-edit-heatmap-page.edit-map {
+    .top {
+        display: flex;
+        gap: 2em;
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+    }
+    .update-button {
+        margin-top: 1em;
+    }
+    .heatmap-details {
+        box-sizing: border-box;
+        padding: 1em;
+        background-color: var(--idle-color);
+        border-radius: 15px;
+        h2 {
+            margin: 0 0 1em 0;
+            font-weight: 800;
+        }
+        gap: 0.5em;
+    }
+    .actions {
+        margin-top: 1em;
+        display: flex;
+        gap: 1em;
+    }
+    .heatmap-preview {
+        position: relative;
+        background-size: contain !important;
+        height: 500px;
+        width: 900px;
+        margin: 4em auto;
+        text-align: center;
+    }
+    .heatmap-overlay-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .heatmap-overlay {
+        width: 100%;
+        height: 100%;
+        canvas.heatmap-canvas {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}

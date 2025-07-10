@@ -203,6 +203,8 @@ const Dashboard = () => {
     )
 }
 
-export default withAuthenticationRequired(Dashboard, {
-    onRedirecting: () => (<div>Redirecting...</div>)
-});
+// export default withAuthenticationRequired(Dashboard, {
+//     onRedirecting: () => (<div>Redirecting...</div>)
+// });
+
+export default Dashboard;
