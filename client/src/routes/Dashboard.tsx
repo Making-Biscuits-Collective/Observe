@@ -108,7 +108,6 @@ const Dashboard = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
 
-    console.log(newProject)
    const getAlertType = (): AlertType => {
         if (newProjectStatus == "ERR") return "ERR";
         return "CONF";
