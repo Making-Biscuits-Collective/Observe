@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { Project, Data, FilteredEventInfo, Event, ObservationData, HeatmapData, JoinHeatmapInstance } from "../types/types";
+import { Project, Data, FilteredEventInfo, Event, ObservationData, HeatmapData, JoinHeatmapInstance, CamelizeKeys } from "../types/types";
 import { generateEventCode, generateUUID } from '../utils/util';
 
 
@@ -29,13 +29,15 @@ export async function getImageURLFromBucket({
     return data?.publicUrl;
 }
 
-export async function createNewProject(newProject: Project) {
+export async function createNewProject(newProject: CamelizeKeys<Project>) {
     return await supabase
     .from('projects')
     .insert([
         { 
             title: newProject.title,
             description: newProject.description,
+            image_path: newProject?.imagePath || '',
+            start_date: newProject.startDate
         },
     ]).select();
 }
@@ -114,7 +116,9 @@ export async function updateProject(projectInfo: Project) {
     return await supabase
         .from('projects')
         .update({
-            title: projectInfo.title
+            title: projectInfo.title,
+            description: projectInfo.description,
+            start_date: projectInfo.start_date
         }) 
         .eq('id', projectInfo.id)
         .select();
