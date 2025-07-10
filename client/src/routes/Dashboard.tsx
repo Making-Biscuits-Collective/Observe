@@ -1,7 +1,7 @@
 import LayoutWrapper from "../partials/LayoutWrapper";
 import { getProjects, createNewProject } from '../utils/supabase';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Project, Data } from "../types/types";
+import { Project, Data, CamelizeKeys } from "../types/types";
 import ProjectCard from "../components/ProjectCard";
 import Alert, {AlertType} from "../components/Alert";
 import { withAuthenticationRequired } from '@auth0/auth0-react';
@@ -10,13 +10,7 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Loading from "../components/Loading";
 
-type NewProject = {
-    title: string;
-    description: string;
-    imagePath: string;
-    start_date?: string;
-}
-
+type NewProject = CamelizeKeys<Project>
 type NewProjectStatus = "IDLE" | "CONF" | "ERR";
 
 const ModalContent = ({
@@ -60,10 +54,10 @@ const ModalContent = ({
             <input 
                 id="new-project-date"
                 type="date"
-                value={newProject.start_date}
+                value={newProject.startDate}
                 onChange={(event) => setNewProject(prevState => ({
                     ...prevState,
-                    start_date: event.target.value
+                    startDate: event.target.value
                 }))}
             />
         </div>
@@ -106,12 +100,15 @@ const Dashboard = () => {
     const [newProject, setNewProject] = useState<NewProject>({
         title: '',
         description: '',
-        imagePath: ''
+        imagePath: '',
+        startDate: ''
     });
     const [newProjectStatus, setNewProjectStatus] = useState<NewProjectStatus>("IDLE");
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+
+    console.log(newProject)
    const getAlertType = (): AlertType => {
         if (newProjectStatus == "ERR") return "ERR";
         return "CONF";
@@ -132,6 +129,9 @@ const Dashboard = () => {
             setNewProjectStatus("CONF");
             setAlertOpen(true);
             console.log('Created Project', projects);
+            
+            setProjectList(prevState => ([
+                    ...prevState, projects?.[0]]));
         })
     }
 

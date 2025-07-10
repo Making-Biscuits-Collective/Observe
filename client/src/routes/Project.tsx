@@ -175,11 +175,15 @@ const EditableProjectContent = ({
 
     // Edited Project State
     const [editedTitle, setEditedTitle] = useState<string>(title);
+    const [editedDate, setEditedDate] = useState<string>(startDate || '')
+    const [editedDesc, setEditedDesc] = useState<string>(description)
 
     const onEditProjectClick = () => {
         
         updateProject({
             title: editedTitle,
+            description: editedDesc,
+            start_date: editedDate,
             id: projectId
         }).then(({status, error}) => {
 
@@ -192,7 +196,12 @@ const EditableProjectContent = ({
                 updateEditStatus("CONF");
                 setIsAlertOpen(true);
                 setEditMode(false);
-                updateProjectData(prevData => ({ ...prevData, title: editedTitle }))
+                updateProjectData(prevData => (
+                    { ...prevData, 
+                        title: editedTitle,
+                        description: editedDesc,
+                        start_date: editedDate
+                    }))
             }
         
             console.log('Project updated!')
@@ -203,6 +212,15 @@ const EditableProjectContent = ({
         if(!editMode && editedTitle != title) {
             setEditedTitle(title);
         }
+
+        if(!editMode && startDate && editedDate != startDate) {
+            setEditedDate(startDate);
+        }
+
+        if(!editMode && editedDesc != description) {
+            setEditedDesc(description);
+        }
+
     }, [editMode])
 
     return (
@@ -221,6 +239,7 @@ const EditableProjectContent = ({
             <div className="project-details">
                 {editMode ? 
                     <>
+                    <div className="project-title">
                         <input type="text" 
                             value={editedTitle} 
                             onChange={
@@ -228,17 +247,35 @@ const EditableProjectContent = ({
                             }
                             className="large-edit-input"
                         />
+                        <img src="/icon/delete.svg" className="project-title-delete" width={26} onClick={() => setDeleteModalIsOpen(true)}/>
+                    </div>
+                    <div className="edit-date-container">
+                        <input 
+                            type="date"
+                            value={editedDate}
+                            onChange={(event) => setEditedDate(event.target.value)}
+                        />
+                    </div>
+                    <div className="edit-desc-container">
+
+                        <textarea
+                            className="edit-desc-textarea"
+                            onChange={(event) => setEditedDesc(event.target.value)}
+                            value={editedDesc}
+                        />
+                    </div>
                     </>
                 : 
+                <>
                     <h1 className="project-title">
                         <div className="project-title-text">{title}</div>
                         <img src="/icon/delete.svg" className="project-title-delete" width={26} onClick={() => setDeleteModalIsOpen(true)}/>
-                    </h1>}
-                <h2 className="project-date">
-                    <img src="/icon/calendar.svg" width={16}/>
-                    {startDate}
-                </h2>
-                <p className="project-description">
+                    </h1>
+                    <h2 className="project-date">
+                        <img src="/icon/calendar.svg" width={16}/>
+                        {startDate}
+                    </h2>
+                    <p className="project-description">
                     {showFullDescription ? description : (
                         shortDescription ? shortDescription : description
                     )}    
@@ -250,6 +287,11 @@ const EditableProjectContent = ({
                 <Button variation="text" label="Read More +" onClick={
                     () => setShowFullDescription(true)
                 }/>}
+                </>
+                    }
+                
+                
+                
             </div>
         </div>
     )

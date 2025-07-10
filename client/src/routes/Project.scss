@@ -81,6 +81,19 @@
             align-items: center;
             gap: 0.5em;
         }
+
+        .edit-date-container {
+            padding-top: 20px;
+        }
+
+        .edit-desc-container {
+            padding-top: 20px;
+        }
+
+        .edit-desc-textarea {
+            width: 100%;
+            height: 350px;
+        }
         p.project-description {
             margin: 1em 0;
         }
