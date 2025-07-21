@@ -21,6 +21,7 @@ import Alert, { AlertType } from '../components/Alert';
 import { Link } from 'react-router-dom';
 import Modal from "../components/Modal";
 import Breadcrumb from '../components/Breadcrumb';
+import { formatDateToMonthDayYear } from '../utils/util';
 
 
 const EventsView = ({
@@ -273,7 +274,7 @@ const EditableProjectContent = ({
                     </h1>
                     <h2 className="project-date">
                         <img src="/icon/calendar.svg" width={16}/>
-                        {startDate}
+                        {startDate && formatDateToMonthDayYear(startDate)}
                     </h2>
                     <p className="project-description">
                     {showFullDescription ? description : (
@@ -431,9 +432,6 @@ const Project = () => {
         })
     }
 
-    /**
-     * Fire on mount
-     */
     useEffect(() => {
         getProjectById(projectId).then(({data, error}) => getProjectInfo({data, error}));
     }, [])

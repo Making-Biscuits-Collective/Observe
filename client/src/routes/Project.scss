@@ -51,9 +51,10 @@
         .project-image {
             overflow: hidden;
             border-radius: 15px;
+            height: fit-content;
+            max-height: 375px;
             img {
                 width: 100%;
-                height: 100%;
             }
         }
         .project-title {

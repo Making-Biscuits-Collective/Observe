@@ -24,6 +24,13 @@
         margin-top: 1em;
         h3.project-title {
             font-weight: 900;
+            margin: 0;
+        }
+        h4.start-end-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            margin: 0;
         }
     }
     &:hover {

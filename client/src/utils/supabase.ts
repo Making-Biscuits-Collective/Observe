@@ -145,6 +145,13 @@ export async function uploadEventMap(mapFile: File) {
     .upload(generateUUID(), mapFile)
 }
 
+export async function uploadProjectImage(imageFile: File) {
+    return await supabase
+    .storage
+    .from('project-photos')
+    .upload(generateUUID(), imageFile)
+}
+
 export async function createObservation(observation: ObservationData) {
     return await supabase
     .from('instances')

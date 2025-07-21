@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Project } from '../types/types';
 import { getImageURLFromBucket, getEventsByProjectId } from '../utils/supabase';
+import { formatDateToMonthDayYear } from '../utils/util';
 import './ProjectCard.scss';
 
 const ProjectCard = ({projectData} : {projectData: Project}) => {
@@ -45,7 +46,10 @@ const ProjectCard = ({projectData} : {projectData: Project}) => {
                 </div>
                 <div className="project-info">
                     <h3 className="project-title">{title}</h3>
-                    <h4 className="start-end-date">{startDate} to Present</h4>
+                    <h4 className="start-end-date">
+                        <img src='/icon/calendar.svg' width={16} />
+                        {startDate && formatDateToMonthDayYear(startDate)}
+                    </h4>
                     <h4 className="event-count">
                         <span className="event-count-total">{totalEvents}</span>{totalEvents == 1 ? ' event' : ' events'}</h4>
                 </div>

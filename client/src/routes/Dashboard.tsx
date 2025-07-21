@@ -1,10 +1,9 @@
 import LayoutWrapper from "../partials/LayoutWrapper";
-import { getProjects, createNewProject } from '../utils/supabase';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { getProjects, createNewProject, uploadProjectImage } from '../utils/supabase';
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Project, Data, CamelizeKeys } from "../types/types";
 import ProjectCard from "../components/ProjectCard";
 import Alert, {AlertType} from "../components/Alert";
-import { withAuthenticationRequired } from '@auth0/auth0-react';
 import './Dashboard.scss';
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -17,12 +16,16 @@ const ModalContent = ({
     newProject,
     setNewProject,
     onCreateNewProjectClick,
-    setNewProjectModalIsOpen
+    setNewProjectModalIsOpen,
+    handleFileChange,
+    projPhoto,
 } : {
     newProject: NewProject,
     setNewProject: Dispatch<SetStateAction<NewProject>>,
     onCreateNewProjectClick: () => void,
-    setNewProjectModalIsOpen: Dispatch<SetStateAction<boolean>>
+    setNewProjectModalIsOpen: Dispatch<SetStateAction<boolean>>,
+    handleFileChange: (event: ChangeEvent<HTMLInputElement>) => void,
+    projPhoto?: File | null
 }) => (
     <div className="new-project-modal">
         <h2 className="modal-title">Create New Project</h2>
@@ -78,13 +81,15 @@ const ModalContent = ({
         </div>
         <div className="input-block">
             <label htmlFor="project-image" className="file-upload">
-                Upload Project Image <img src="/icon/upload.svg" width={16}/>
+                {projPhoto ? <>{projPhoto.name} uploaded <img src="/icon/check.svg" width={16}/></> : 
+                <>Upload Project Image <img src="/icon/upload.svg" width={16}/></>}
             </label>
             <input 
                 type="file" 
                 id="project-image" 
                 name="project-image" 
                 accept="image/png, image/jpeg"
+                onChange={handleFileChange}
             />
         </div>
         <div className="flex-centered">
@@ -103,9 +108,17 @@ const Dashboard = () => {
         imagePath: '',
         startDate: ''
     });
+    const [newProjectPhoto, setNewProjectPhoto] = useState<File | null>(null);
     const [newProjectStatus, setNewProjectStatus] = useState<NewProjectStatus>("IDLE");
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const image = event.target.files?.[0];
+        if (image) {
+            setNewProjectPhoto(image);
+        }
+    }
 
 
    const getAlertType = (): AlertType => {
@@ -123,15 +136,39 @@ const Dashboard = () => {
     }
 
     const onCreateNewProjectClick = () => {
-        console.log('Creating project...')
-        createNewProject(newProject).then(({data: projects, error}) => {
-            setNewProjectStatus("CONF");
-            setAlertOpen(true);
-            console.log('Created Project', projects);
-            
-            setProjectList(prevState => ([
-                    ...prevState, projects?.[0]]));
-        })
+
+        if (newProjectPhoto) {
+            uploadProjectImage(newProjectPhoto).then(({ data, error }) => {
+                console.log(data);
+                if (error) {
+                    console.log(error);
+                } else if (data) {
+                    createNewProject({...newProject, imagePath: data?.path}).then(({data: projects, error: projError}) => {
+                        if (projects) {
+                            setNewProjectStatus("CONF");
+                            setAlertOpen(true);
+                            setProjectList(prevState => ([
+                                    ...prevState, projects?.[0]]));
+                        } else {
+                            console.error(projError);
+                        }
+
+                    })
+                }
+            })
+        } else {
+            createNewProject(newProject).then(({data: projects, error: projError}) => {
+                if (projects) {
+                    setNewProjectStatus("CONF");
+                    setAlertOpen(true);
+                    setProjectList(prevState => ([
+                            ...prevState, projects?.[0]]));
+                } else {
+                    console.error(projError);
+                }
+
+            })
+        }
     }
 
     const [projectList, setProjectList] = useState<Project[]>([]);
@@ -167,6 +204,8 @@ const Dashboard = () => {
                 setNewProject={setNewProject}
                 onCreateNewProjectClick={onCreateNewProjectClick}
                 setNewProjectModalIsOpen={setNewProjectModalIsOpen}
+                handleFileChange={handleFileChange}
+                projPhoto={newProjectPhoto}
             />
         </Modal>}
         <LayoutWrapper>
