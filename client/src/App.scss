@@ -1,6 +1,7 @@
 // Global Application Styles
 
-body, p {
+body,
+p {
     font-family: 'Raleway Variable', sans-serif;
     line-height: 1.5;
 }
@@ -52,7 +53,10 @@ h1.page-title {
     font-size: 2.5em;
 }
 
-input, input[type=text], textarea, select {
+input,
+input[type=text],
+textarea,
+select {
     font-family: 'Raleway Variable', sans-serif;
     font-size: 1em;
     padding: 0.5em;
@@ -65,18 +69,19 @@ input[type=file] {
 }
 
 label.file-upload {
-    background-color: black;
+    background-color: var(--button-color);
     width: 100%;
     color: white;
     padding: 1em 0;
-    border-radius: 10px;
+    border-radius: 30px;
     display: flex;
     justify-content: center;
     gap: 0.5em;
     transition: all 0.3s ease-in-out;
+
     &:hover {
         cursor: pointer;
-        background-color: rgb(0,0,0,0.8);
+        background-color: rgb(0, 0, 0, 0.8);
     }
 }
 
@@ -105,15 +110,19 @@ a {
     opacity: 1;
 
 
-.fade-exit-active {
-    opacity: 0;
-    transition: opacity 300ms ease-out;
-}}
+    .fade-exit-active {
+        opacity: 0;
+        transition: opacity 300ms ease-out;
+    }
+}
 
-.entering, .entered {
+.entering,
+.entered {
     opacity: 1;
 }
-.exiting, .exited {
+
+.exiting,
+.exited {
     opacity: 0;
 }
 

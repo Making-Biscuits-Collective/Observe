@@ -6,13 +6,14 @@ import Dashboard from './routes/Dashboard';
 import NewEvent from './routes/NewEvent';
 import Event from './routes/Event';
 import ActivityMapping from './routes/observations/ActivityMapping';
-import './App.scss';
 import Observations from './routes/observations/Observations';
 import ActivityMappingEdit from './routes/observations/ActivityMappingEdit';
 import Heatmaps from './routes/heatmaps/Heatmaps';
 import CreateHeatmap from './routes/heatmaps/CreateHeatmap';
 import EditHeatmap from './routes/heatmaps/EditHeatmap';
 import Help from './routes/Help';
+import MovingLines from './routes/observations/MovingLines';
+import './App.scss';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/project/:projectId/newEvent" element={<NewEvent />} />
         <Route path="/event/:eventId/activityMapping" element={<ActivityMapping />} />
+        <Route path="/event/:eventId/movingLines" element={<MovingLines />} />
         <Route path="/event/:eventId/observations" element={<Observations />} />
         <Route path="/event/:eventId/observations/edit/:observationId" element={<ActivityMappingEdit />} />
         <Route path="/event/:eventId" element={<Event />} />

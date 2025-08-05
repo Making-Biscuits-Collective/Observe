@@ -1,7 +1,7 @@
 type Camelize<T extends string> = T extends `${infer A}_${infer B}` ? `${A}${Camelize<Capitalize<B>>}` : T
 
 export type CamelizeKeys<T extends object> = {
-  [key in keyof T as key extends string ? Camelize<key> : key]: T[key]
+    [key in keyof T as key extends string ? Camelize<key> : key]: T[key]
 }
 
 export type Project = {
@@ -19,6 +19,7 @@ export type ProjectLoadingState = "LOADING" | "LOADED" | "ERROR"
 export type LoadingState = "IDLE" | "LOADING" | "LOADED" | "ERROR"
 
 export type Event = {
+    type?: string;
     title: string;
     date: string;
     location: string;
@@ -44,6 +45,7 @@ export type FilteredEventInfo = {
     label_mapping2?: string;
     label_mapping3?: string;
     label_mapping4?: string;
+    type?: string;
 }
 
 export type Data<T> = {
@@ -58,6 +60,11 @@ export type Coordinates = {
 
 export type MapData = {
     coordinates: Coordinates;
+    type: ActivityMapping;
+}
+
+export type MovingMapData = {
+    coordinates: Coordinates[];
     type: ActivityMapping;
 }
 
@@ -92,7 +99,7 @@ export type HeatmapInstance = {
 export type ObsState = {
     observationId: string;
     coordinatesList: MapData[];
-} 
+}
 
 export type JoinHeatmapInstance = {
     instanceId: string;

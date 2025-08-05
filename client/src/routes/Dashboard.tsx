@@ -3,7 +3,7 @@ import { getProjects, createNewProject, uploadProjectImage } from '../utils/supa
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Project, Data, CamelizeKeys } from "../types/types";
 import ProjectCard from "../components/ProjectCard";
-import Alert, {AlertType} from "../components/Alert";
+import Alert, { AlertType } from "../components/Alert";
 import './Dashboard.scss';
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -19,7 +19,7 @@ const ModalContent = ({
     setNewProjectModalIsOpen,
     handleFileChange,
     projPhoto,
-} : {
+}: {
     newProject: NewProject,
     setNewProject: Dispatch<SetStateAction<NewProject>>,
     onCreateNewProjectClick: () => void,
@@ -30,13 +30,13 @@ const ModalContent = ({
     <div className="new-project-modal">
         <h2 className="modal-title">Create New Project</h2>
         <div className="input-block">
-            <label 
+            <label
                 htmlFor="new-project-title"
                 className="required"
             >
                 Project Name
             </label>
-            <input 
+            <input
                 id="new-project-title"
                 type="text"
                 placeholder="New Project"
@@ -48,13 +48,13 @@ const ModalContent = ({
             />
         </div>
         <div className="input-block">
-            <label 
+            <label
                 htmlFor="new-project-date"
                 className="required"
             >
                 Project Date
             </label>
-            <input 
+            <input
                 id="new-project-date"
                 type="date"
                 value={newProject.startDate}
@@ -81,20 +81,20 @@ const ModalContent = ({
         </div>
         <div className="input-block">
             <label htmlFor="project-image" className="file-upload">
-                {projPhoto ? <>{projPhoto.name} uploaded <img src="/icon/check.svg" width={16}/></> : 
-                <>Upload Project Image <img src="/icon/upload.svg" width={16}/></>}
+                {projPhoto ? <>{projPhoto.name} uploaded <img src="/icon/check.svg" width={16} /></> :
+                    <>Upload Project Image <img src="/icon/upload.svg" width={16} /></>}
             </label>
-            <input 
-                type="file" 
-                id="project-image" 
-                name="project-image" 
+            <input
+                type="file"
+                id="project-image"
+                name="project-image"
                 accept="image/png, image/jpeg"
                 onChange={handleFileChange}
             />
         </div>
         <div className="flex-centered">
-            <Button label="Create" variation="primary" onClick={onCreateNewProjectClick}/>
-            <Button label="Cancel" variation="primary" onClick={() => setNewProjectModalIsOpen(false)}/>
+            <Button label="Create" variation="primary" onClick={onCreateNewProjectClick} />
+            <Button label="Cancel" variation="primary" onClick={() => setNewProjectModalIsOpen(false)} />
         </div>
     </div>
 )
@@ -121,12 +121,12 @@ const Dashboard = () => {
     }
 
 
-   const getAlertType = (): AlertType => {
+    const getAlertType = (): AlertType => {
         if (newProjectStatus == "ERR") return "ERR";
         return "CONF";
     }
 
-    const getProjectList = ({ data, error } : Data<Project[]>) => {
+    const getProjectList = ({ data, error }: Data<Project[]>) => {
         if (data) {
             setProjectList(data);
             setIsLoading(false);
@@ -143,12 +143,12 @@ const Dashboard = () => {
                 if (error) {
                     console.log(error);
                 } else if (data) {
-                    createNewProject({...newProject, imagePath: data?.path}).then(({data: projects, error: projError}) => {
+                    createNewProject({ ...newProject, imagePath: data?.path }).then(({ data: projects, error: projError }) => {
                         if (projects) {
                             setNewProjectStatus("CONF");
                             setAlertOpen(true);
                             setProjectList(prevState => ([
-                                    ...prevState, projects?.[0]]));
+                                ...prevState, projects?.[0]]));
                         } else {
                             console.error(projError);
                         }
@@ -157,12 +157,12 @@ const Dashboard = () => {
                 }
             })
         } else {
-            createNewProject(newProject).then(({data: projects, error: projError}) => {
+            createNewProject(newProject).then(({ data: projects, error: projError }) => {
                 if (projects) {
                     setNewProjectStatus("CONF");
                     setAlertOpen(true);
                     setProjectList(prevState => ([
-                            ...prevState, projects?.[0]]));
+                        ...prevState, projects?.[0]]));
                 } else {
                     console.error(projError);
                 }
@@ -174,7 +174,7 @@ const Dashboard = () => {
     const [projectList, setProjectList] = useState<Project[]>([]);
 
     useEffect(() => {
-        getProjects().then(({data, error}) => getProjectList({data, error}));
+        getProjects().then(({ data, error }) => getProjectList({ data, error }));
     }, [])
 
     useEffect(() => {
@@ -189,54 +189,54 @@ const Dashboard = () => {
 
     return (
         <>
-        <Alert 
-            message="Your project has been created successfully!"
-            variation={getAlertType()}
-            isOpen={alertOpen}
-            setIsOpen={setAlertOpen}
-        />
-        {newProjectModalIsOpen && <Modal 
-            isOpen={newProjectModalIsOpen}
-            setIsOpen={setNewProjectModalIsOpen}
-        >
-            <ModalContent 
-                newProject={newProject}
-                setNewProject={setNewProject}
-                onCreateNewProjectClick={onCreateNewProjectClick}
-                setNewProjectModalIsOpen={setNewProjectModalIsOpen}
-                handleFileChange={handleFileChange}
-                projPhoto={newProjectPhoto}
+            <Alert
+                message="Your project has been created successfully!"
+                variation={getAlertType()}
+                isOpen={alertOpen}
+                setIsOpen={setAlertOpen}
             />
-        </Modal>}
-        <LayoutWrapper>
+            {newProjectModalIsOpen && <Modal
+                isOpen={newProjectModalIsOpen}
+                setIsOpen={setNewProjectModalIsOpen}
+            >
+                <ModalContent
+                    newProject={newProject}
+                    setNewProject={setNewProject}
+                    onCreateNewProjectClick={onCreateNewProjectClick}
+                    setNewProjectModalIsOpen={setNewProjectModalIsOpen}
+                    handleFileChange={handleFileChange}
+                    projPhoto={newProjectPhoto}
+                />
+            </Modal>}
+            <LayoutWrapper>
 
-            <div className="observe-dashboard">
-                <section className="title">
-                    <div className="container-max flex-centered">
-                        <h1 className="page-title">Dashboard</h1>
-                    </div>
-                </section>
-                <section className="projects">
-                    <div className="dashboard-actions container-max">
-                        <Button 
-                            variation="primary" 
-                            label="+ Create New Project" 
-                            onClick={() => setNewProjectModalIsOpen(true)}
-                        />
-                    </div>
-                    <div className="projects-grid container-max">
-                        {isLoading && <Loading />}
-                        {projectList.map((projectData) => 
-                            <div className="project-grid-card" key={`grid-item-${projectData.title}`}>
-                                <ProjectCard 
-                                    projectData={projectData} 
-                                />
-                            </div>
-                        )}
-                    </div>
-                </section>
-            </div>
-        </LayoutWrapper>
+                <div className="observe-dashboard">
+                    <section className="title">
+                        <div className="container-max flex-centered">
+                            <h1 className="page-title">Dashboard</h1>
+                        </div>
+                    </section>
+                    <section className="projects">
+                        <div className="dashboard-actions container-max">
+                            <Button
+                                variation="primary"
+                                label="+ Create New Project"
+                                onClick={() => setNewProjectModalIsOpen(true)}
+                            />
+                        </div>
+                        <div className="projects-grid container-max">
+                            {isLoading && <Loading />}
+                            {projectList.map((projectData) =>
+                                <div className="project-grid-card" key={`grid-item-${projectData.title}`}>
+                                    <ProjectCard
+                                        projectData={projectData}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                </div>
+            </LayoutWrapper>
         </>
     )
 }

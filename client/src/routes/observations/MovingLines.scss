@@ -1,0 +1,116 @@
+.moving-lines-activity {
+    display: flex;
+    flex-direction: column;
+
+    // gap: 4em;
+    .container-max {
+        flex-direction: column;
+
+        &.breadcrumb {
+            width: 100%;
+        }
+    }
+
+    h1 {
+        margin-bottom: 0;
+    }
+
+    h2 {
+        margin: 0;
+    }
+
+    .activity-selector {
+        display: flex;
+        gap: 1em;
+        justify-content: center;
+    }
+
+    .observation-interface {
+        display: flex;
+        gap: 1em;
+        margin: 2em 0;
+        width: 100%;
+        flex-direction: column;
+
+        .observation-details {
+            grid-column: span 4;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+
+        .select-block {
+            display: flex;
+            align-content: center;
+
+            span.activity-label {
+                font-size: 0.8em;
+            }
+
+            .centered-selection {
+                display: flex;
+                gap: 0.5em;
+                align-items: center;
+                padding: 1em;
+                border-radius: 10px;
+                transition: all 0.3s ease-in-out;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: rgb(222, 246, 247);
+                }
+            }
+
+            input[type="radio"] {
+                // width: fit-content;
+                appearance: none;
+                position: absolute;
+                z-index: -1;
+                width: 200px;
+                height: 30px;
+                border: 0;
+
+                &:checked+label {
+                    background-color: rgb(222, 246, 247);
+                }
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .form-grid {
+        display: flex;
+        gap: 1em;
+        justify-content: space-around;
+
+        .input-block {
+            flex: 1;
+
+            input,
+            select,
+            textarea {
+                width: 100%;
+                padding: 1em;
+                box-sizing: border-box;
+            }
+
+            label {
+                margin-top: 1em;
+            }
+        }
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        margin: 3em 0;
+    }
+
+    textarea.observation-notes {
+        width: 100%;
+        height: 100px;
+    }
+}
