@@ -6,17 +6,23 @@ import './ObservationCard.scss';
 const ObservationCard = ({
     observationData,
     eventId
-} : {
+}: {
     observationData: ObservationData,
     eventId?: string;
 }) => {
 
     const navigate = useNavigate();
+    const { type } = observationData;
+
+    const getEditRoute = () => {
+        return type == "MOVE" ? `/event/${eventId}/observations/editm/${observationData?.id}` :
+            `/event/${eventId}/observations/edit/${observationData?.id}`
+    }
 
     return (
         <div className='observation-card'>
             <div className='input-block'>
-                <label 
+                <label
                     htmlFor='observer-id'
                     className='observation-label'
                 >
@@ -25,7 +31,7 @@ const ObservationCard = ({
                 <span id='observer-id' className='heatmap-data'>{observationData.id}</span>
             </div>
             <div className='input-block'>
-                <label 
+                <label
                     htmlFor='observer-name'
                     className='observation-label'
                 >
@@ -34,7 +40,7 @@ const ObservationCard = ({
                 <span id='observer-name' className='heatmap-data'>{observationData.observer_name}</span>
             </div>
             <div className='input-block'>
-                <label 
+                <label
                     htmlFor='observer-date'
                     className='observation-label'
                 >
@@ -43,7 +49,7 @@ const ObservationCard = ({
                 <span id='observer-date' className='heatmap-data'>{observationData.date}</span>
             </div>
             <div className='input-block'>
-                <label 
+                <label
                     htmlFor='observer-time'
                     className='observation-label'
                 >
@@ -52,7 +58,7 @@ const ObservationCard = ({
                 <span id='observer-date' className='heatmap-data'>{observationData.time}</span>
             </div>
             <div className='input-block'>
-                <label 
+                <label
                     htmlFor='observer-weather'
                     className='observation-label'
                 >
@@ -64,20 +70,20 @@ const ObservationCard = ({
                 </span>
             </div>
             <div className='input-block'>
-                <label 
+                <label
                     htmlFor='observer-temperature'
                     className='observation-label'
                 >
                     Temperature (°F)
                 </label>
                 <span id='observer-temperature' className='heatmap-data'>
-                    {observationData.temperature ? 
+                    {observationData.temperature ?
                         observationData.temperature : '-'
                     } °F
                 </span>
             </div>
             <div className='input-block'>
-                <Button 
+                <Button
                     label='View >'
                     variation='cta'
                     onClick={() => navigate(`/event/${eventId}/observations/edit/${observationData?.id}`)}

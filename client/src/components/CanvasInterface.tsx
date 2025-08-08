@@ -291,7 +291,7 @@ const MovingMap = ({
                         plotLine =>
                             plotLine.map((marker) =>
                                 <Marker
-                                    key={`${marker.coordinates.x}+${marker.coordinates.y}`}
+                                    key={`${marker.coordinates?.x}+${marker.coordinates?.y}`}
                                     activityType={marker.type}
                                     coordinates={marker.coordinates}
                                     observationType={1}
@@ -301,7 +301,7 @@ const MovingMap = ({
                         currentPlotLine && currentPlotLine.map(
                             marker =>
                                 <Marker
-                                    key={`${marker.coordinates.x}+${marker.coordinates.y}`}
+                                    key={`${marker.coordinates?.x}+${marker.coordinates?.y}`}
                                     activityType={marker.type}
                                     coordinates={marker.coordinates}
                                     observationType={1}
@@ -376,7 +376,7 @@ const InteractiveMap = ({ mapPath, activityType, setActivityType, mapData, setMa
                     {mapData && mapData.map(
                         marker =>
                             <Marker
-                                key={`${marker.coordinates.x}+${marker.coordinates.y}`}
+                                key={`${marker.coordinates?.x}+${marker.coordinates?.y}`}
                                 activityType={marker.type}
                                 coordinates={marker.coordinates}
                             />

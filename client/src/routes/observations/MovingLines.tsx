@@ -18,6 +18,7 @@ const MovingLines = () => {
         date: '',
         time: '',
         weather: 'sunny',
+        type: "MOVE"
     });
 
     const [isLoading, setIsLoading] = useState<LoadingState>("IDLE");
@@ -79,6 +80,8 @@ const MovingLines = () => {
         setIsLoading("LOADING");
         console.log(observationData);
         createObservation(observationData).then(({ data, error }) => {
+            console.log("Observation Data: ", observationData);
+            console.log("Error: ", error);
             if (data) {
                 setInstanceCreated(true);
                 setIsLoading("LOADED");

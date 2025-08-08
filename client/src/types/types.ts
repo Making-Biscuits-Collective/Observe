@@ -78,6 +78,7 @@ export type ObservationData = {
     map_data?: string;
     event?: string;
     id?: string;
+    type?: string;
 }
 
 export type HeatmapData = {

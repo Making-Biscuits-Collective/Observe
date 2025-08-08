@@ -3,19 +3,23 @@
         display: flex;
         gap: 1em;
     }
+
     .interactive-map {
         height: 500px;
         width: 900px;
         border: 2px black solid;
         position: relative;
+
         img.map-image {
             object-fit: contain;
-            height: 100%;
-            width: 100%;
+            width: 900px;
+            height: 500px;
         }
+
         &:hover {
             cursor: crosshair;
         }
+
         .markers {
             position: absolute;
             width: 100%;
@@ -24,6 +28,7 @@
             top: 0;
             z-index: 5;
         }
+
         .marker {
             position: absolute;
         }

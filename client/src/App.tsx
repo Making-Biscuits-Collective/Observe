@@ -13,6 +13,7 @@ import CreateHeatmap from './routes/heatmaps/CreateHeatmap';
 import EditHeatmap from './routes/heatmaps/EditHeatmap';
 import Help from './routes/Help';
 import MovingLines from './routes/observations/MovingLines';
+import MovingLinesEdit from './routes/observations/MovingLinesEdit';
 import './App.scss';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
         <Route path="/event/:eventId/movingLines" element={<MovingLines />} />
         <Route path="/event/:eventId/observations" element={<Observations />} />
         <Route path="/event/:eventId/observations/edit/:observationId" element={<ActivityMappingEdit />} />
+        <Route path="/event/:eventId/observations/editm/:observationId" element={<MovingLinesEdit />} />
         <Route path="/event/:eventId" element={<Event />} />
         <Route path="/event/:eventId/heatmaps" element={<Heatmaps />} />
         <Route path="/event/:eventId/newHeatmap" element={<CreateHeatmap />} />
